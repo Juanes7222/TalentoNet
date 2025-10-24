@@ -2,7 +2,7 @@
 
 Sistema completo de gestión de recursos humanos, nómina, afiliaciones y seguridad social desarrollado con arquitectura moderna cloud-native.
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 - **Backend**: NestJS + TypeORM + PostgreSQL
 - **Frontend**: React + TypeScript + Tailwind CSS + Vite
@@ -11,7 +11,7 @@ Sistema completo de gestión de recursos humanos, nómina, afiliaciones y seguri
 - **Container**: Docker + Kubernetes
 - **CI/CD**: GitHub Actions
 
-## 📦 Monorepo Structure
+## Monorepo Structure
 
 ```
 TalentoNet/
@@ -25,7 +25,7 @@ TalentoNet/
 └── scripts/              # Utility scripts
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerrequisitos
 
@@ -64,7 +64,7 @@ La aplicación estará disponible en:
 - **RabbitMQ Management**: http://localhost:15672 (guest/guest)
 - **MinIO Console**: http://localhost:9001 (minioadmin/minioadmin)
 
-## 📝 Scripts Disponibles
+## Scripts Disponibles
 
 ```bash
 # Desarrollo
@@ -82,7 +82,7 @@ pnpm docker:up           # Inicia contenedores
 pnpm docker:down         # Detiene contenedores
 ```
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Backend
@@ -97,7 +97,7 @@ pnpm test                # Unit tests con Vitest
 pnpm cypress:open        # E2E tests con Cypress
 ```
 
-## 🔐 Autenticación
+## Autenticación
 
 Usuarios de prueba (después de ejecutar seed):
 
@@ -105,7 +105,7 @@ Usuarios de prueba (después de ejecutar seed):
 - **RH**: rh@talentonet.com / Password123!
 - **Empleado**: empleado1@talentonet.com / ChangeMe123!
 
-## 📚 API Documentation
+## API Documentation
 
 Swagger UI disponible en: http://localhost:3000/api/docs
 
@@ -119,7 +119,7 @@ Principales endpoints:
 - `PATCH /api/v1/employees/:id` - Actualizar empleado
 - `DELETE /api/v1/employees/:id` - Desactivar empleado
 
-## 🚢 Deployment
+## Deployment
 
 ### Docker
 
@@ -157,7 +157,7 @@ El proyecto incluye pipelines automáticos:
 **Secrets requeridos en GitHub**:
 - `KUBECONFIG`: Configuración de cluster Kubernetes (base64)
 
-## 🔧 Configuración
+## Configuración
 
 ### Variables de Entorno Backend
 
@@ -176,7 +176,7 @@ AWS_SECRET_ACCESS_KEY=...
 S3_BUCKET=talentonet-documents
 ```
 
-## 🛠️ Integraciones
+## Integraciones
 
 ### Yéminus (Afiliaciones)
 
@@ -197,26 +197,8 @@ PILA_OPERATOR_CODE=001
 PILA_COMPANY_NIT=900123456
 ```
 
-## 📊 Monitoreo
+## Monitoreo
 
 - **Logs**: Centralizados vía stdout/stderr (capturar con EFK/Loki)
 - **Health Checks**: `/api/v1/health` (configurado en K8s probes)
 - **Metrics**: Prometheus-ready (agregar @nestjs/prometheus en futuro)
-
-## 🤝 Contribuir
-
-1. Fork del repositorio
-2. Crear feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit cambios (`git commit -m 'Add AmazingFeature'`)
-4. Push a branch (`git push origin feature/AmazingFeature`)
-5. Abrir Pull Request
-
-## 📄 Licencia
-
-Propietario - Todos los derechos reservados
-
-## 🙋 Soporte
-
-- **Documentación API**: http://localhost:3000/api/docs
-- **Issues**: GitHub Issues
-- **Email**: soporte@talentonet.com
