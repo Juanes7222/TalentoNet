@@ -1,0 +1,100 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: talentonet-postgres
+    environment:
+      POSTGRES_USER: talentonet
+      POSTGRES_PASSWORD: talentonet_secret
+      POSTGRES_DB: talentonet_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./packages/backend/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - talentonet
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: talentonet-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - talentonet
+
+  minio:
+    image: minio/minio:latest
+    container_name: talentonet-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - talentonet
+
+  backend:
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile
+    container_name: talentonet-backend
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: talentonet
+      DB_PASSWORD: talentonet_secret
+      DB_DATABASE: talentonet_db
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      S3_ENDPOINT: http://minio:9000
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
+      S3_BUCKET: talentonet-documents
+      JWT_SECRET: dev-secret-change-in-production
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - minio
+    networks:
+      - talentonet
+    volumes:
+      - ./packages/backend:/app
+      - /app/node_modules
+
+  frontend:
+    build:
+      context: ./packages/frontend
+      dockerfile: Dockerfile
+    container_name: talentonet-frontend
+    environment:
+      VITE_API_URL: http://localhost:3000/api/v1
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - talentonet
+    volumes:
+      - ./packages/frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  talentonet:
+    driver: bridge
