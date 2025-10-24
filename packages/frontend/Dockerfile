@@ -9,14 +9,19 @@ RUN npm install -g pnpm
 # Copy package files
 COPY package.json pnpm-lock.yaml* ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies (use --no-frozen-lockfile if lockfile is not present)
+RUN sh -lc "if [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; else pnpm install --no-frozen-lockfile; fi"
 
 # Copy source
 COPY . .
 
+# Ensure tsc is available (in case devDependencies weren't installed in the build context)
 # Build
-RUN pnpm build
+ # Ensure typescript is installed locally so `tsc` resolves to /app/node_modules/typescript
+ RUN pnpm add -D typescript
+
+ # Build
+ RUN pnpm build
 
 # Production stage with nginx
 FROM nginx:alpine

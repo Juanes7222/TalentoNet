@@ -9,8 +9,8 @@ RUN npm install -g pnpm
 # Copy package files
 COPY package.json pnpm-lock.yaml* ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies (use --no-frozen-lockfile if lockfile is not present)
+RUN sh -lc "if [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; else pnpm install --no-frozen-lockfile; fi"
 
 # Copy source
 COPY . .
@@ -29,8 +29,8 @@ RUN npm install -g pnpm
 # Copy package files
 COPY package.json pnpm-lock.yaml* ./
 
-# Install production dependencies only
-RUN pnpm install --prod --frozen-lockfile
+# Install production dependencies only (tolerate absent lockfile)
+RUN sh -lc "if [ -f pnpm-lock.yaml ]; then pnpm install --prod --frozen-lockfile; else pnpm install --prod --no-frozen-lockfile; fi"
 
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
