@@ -6,6 +6,7 @@ import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { EmployeesListPage } from './pages/EmployeesListPage';
 import { EmployeeFormPage } from './pages/EmployeeFormPage';
+import { EmployeeDetailPage } from './pages/EmployeeDetailPage';
 import VacanciesListPage from './pages/recruitment/VacanciesListPage';
 import VacancyFormPage from './pages/recruitment/VacancyFormPage';
 import VacancyDetailPage from './pages/recruitment/VacancyDetailPage';
@@ -31,6 +32,7 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/employees" element={<EmployeesListPage />} />
             <Route path="/employees/new" element={<EmployeeFormPage />} />
+            <Route path="/employees/:id" element={<EmployeeDetailPage />} />
             <Route path="/employees/:id/edit" element={<EmployeeFormPage />} />
             
             {/* Rutas de reclutamiento */}

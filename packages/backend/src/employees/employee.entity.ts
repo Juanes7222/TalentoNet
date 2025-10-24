@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Contract } from '../payroll/contract.entity';
-import { Affiliation } from '../payroll/affiliation.entity';
+import { Affiliation } from '../affiliations/entities/affiliation.entity';
 import { PayrollEntry } from '../payroll/payroll-entry.entity';
 import { Document } from '../documents/document.entity';
 

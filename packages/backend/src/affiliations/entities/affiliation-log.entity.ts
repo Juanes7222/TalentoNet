@@ -25,7 +25,7 @@ export class AffiliationLog {
   id: string;
 
   // Relación con afiliación
-  @ManyToOne(() => Affiliation, (affiliation) => affiliation.logs, {
+  @ManyToOne(() => Affiliation, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'affiliation_id' })

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useEmployees, useDeleteEmployee } from '../hooks';
 import type { Employee } from '../types';
 
@@ -47,12 +48,12 @@ export default function ListaEmpleados() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Empleados</h1>
-        <a
-          href="/employees/new"
+        <Link
+          to="/employees/new"
           className="btn btn-primary"
         >
           + Nuevo Empleado
-        </a>
+        </Link>
       </div>
 
       {/* Filtros */}
@@ -121,9 +122,8 @@ export default function ListaEmpleados() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">
-                    {employee.fullName}
+                    {employee.fullName || `${employee.firstName} ${employee.lastName}`}
                   </div>
-                  <div className="text-sm text-gray-500">{employee.phone}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {employee.city}
@@ -143,18 +143,18 @@ export default function ListaEmpleados() {
                   {new Date(employee.hireDate).toLocaleDateString('es-CO')}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                  <a
-                    href={`/employees/${employee.id}`}
+                  <Link
+                    to={`/employees/${employee.id}`}
                     className="text-primary-600 hover:text-primary-900"
                   >
                     Ver
-                  </a>
-                  <a
-                    href={`/employees/${employee.id}/edit`}
+                  </Link>
+                  <Link
+                    to={`/employees/${employee.id}/edit`}
                     className="text-primary-600 hover:text-primary-900"
                   >
                     Editar
-                  </a>
+                  </Link>
                   <button
                     onClick={() => handleDelete(employee.id)}
                     className="text-red-600 hover:text-red-900"

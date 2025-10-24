@@ -6,11 +6,11 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany,
+  // OneToMany,
 } from 'typeorm';
 import { Employee } from '../../employees/employee.entity';
 import { User } from '../../users/user.entity';
-import { AffiliationLog } from './affiliation-log.entity';
+// import { AffiliationLog } from './affiliation-log.entity';
 
 export enum AffiliationType {
   ARL = 'ARL',
@@ -139,7 +139,7 @@ export class Affiliation {
   @Column({ name: 'retired_at', type: 'timestamptz', nullable: true })
   retiredAt?: Date;
 
-  // Relación con logs
-  @OneToMany(() => AffiliationLog, (log) => log.affiliation)
-  logs: AffiliationLog[];
+  // Relación con logs (TODO: Implementar AffiliationLog entity)
+  // @OneToMany(() => AffiliationLog, (log) => log.affiliation)
+  // logs: AffiliationLog[];
 }
