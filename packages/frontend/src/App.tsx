@@ -13,6 +13,10 @@ import VacancyEditPage from './pages/recruitment/VacancyEditPage';
 import CandidatesListPage from './pages/recruitment/CandidatesListPage';
 import CandidateFormPage from './pages/recruitment/CandidateFormPage';
 import CandidateDetailPage from './pages/recruitment/CandidateDetailPage';
+import AffiliationsListPage from './pages/affiliations/AffiliationsListPage';
+import AffiliationFormPage from './pages/affiliations/AffiliationFormPage';
+import AffiliationDetailPage from './pages/affiliations/AffiliationDetailPage';
+import AffiliationReportPage from './pages/affiliations/AffiliationReportPage';
 
 function App() {
   return (
@@ -37,6 +41,12 @@ function App() {
             <Route path="/recruitment/candidates" element={<CandidatesListPage />} />
             <Route path="/recruitment/candidates/new" element={<CandidateFormPage />} />
             <Route path="/recruitment/candidates/:id" element={<CandidateDetailPage />} />
+            
+            {/* Rutas de afiliaciones */}
+            <Route path="/affiliations" element={<AffiliationsListPage />} />
+            <Route path="/affiliations/new" element={<AffiliationFormPage />} />
+            <Route path="/affiliations/:id" element={<AffiliationDetailPage />} />
+            <Route path="/affiliations/report" element={<AffiliationReportPage />} />
             
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Route>
