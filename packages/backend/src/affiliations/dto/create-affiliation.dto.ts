@@ -52,5 +52,5 @@ export class CreateAffiliationDto {
     description: 'Archivo del comprobante (se sube por separado)',
   })
   @IsOptional()
-  comprobanteFile?: Express.Multer.File;
+  comprobanteFile?: any; // Express.Multer.File - TODO: install @types/multer
 }

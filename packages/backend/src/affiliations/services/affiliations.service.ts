@@ -340,17 +340,23 @@ export class AffiliationsService {
 
     const results = await query.getRawMany();
 
+    // Convertir totales de string a number
+    const dataWithNumbers = results.map((r) => ({
+      ...r,
+      total: parseInt(r.total, 10),
+    }));
+
     return {
       period: period || 'all',
       generatedAt: new Date(),
-      data: results,
+      data: dataWithNumbers,
       summary: {
-        totalActivas: results
+        totalActivas: dataWithNumbers
           .filter((r) => r.estado === 'activo')
-          .reduce((sum, r) => sum + parseInt(r.total), 0),
-        totalRetiradas: results
+          .reduce((sum, r) => sum + r.total, 0),
+        totalRetiradas: dataWithNumbers
           .filter((r) => r.estado === 'retirado')
-          .reduce((sum, r) => sum + parseInt(r.total), 0),
+          .reduce((sum, r) => sum + r.total, 0),
       },
     };
   }

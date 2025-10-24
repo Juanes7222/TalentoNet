@@ -63,7 +63,7 @@ export class AffiliationsController {
   @UseInterceptors(FileInterceptor('comprobante'))
   async create(
     @Body() createDto: CreateAffiliationDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: any, // Express.Multer.File - TODO: install @types/multer
     @Request() req: any,
   ) {
     if (!file) {
@@ -155,7 +155,7 @@ export class AffiliationsController {
   @UseInterceptors(FileInterceptor('comprobante'))
   async updateDocument(
     @Param('id') id: string,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: any, // Express.Multer.File - TODO: install @types/multer
     @Request() req: any,
   ) {
     if (!file) {
