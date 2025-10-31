@@ -175,30 +175,3 @@ AWS_ACCESS_KEY_ID=...
 AWS_SECRET_ACCESS_KEY=...
 S3_BUCKET=talentonet-documents
 ```
-
-## Integraciones
-
-### Yéminus (Afiliaciones)
-
-Stub implementado en `packages/backend/src/integrations/yeminus.adapter.ts`. Configurar:
-
-```env
-YEMINUS_API_URL=https://api.yeminus.com/v1
-YEMINUS_API_KEY=your_api_key
-YEMINUS_MAX_RETRIES=3
-```
-
-### PILA (Archivos Planos)
-
-Generación de archivos planos para operadores. Configurar:
-
-```env
-PILA_OPERATOR_CODE=001
-PILA_COMPANY_NIT=900123456
-```
-
-## Monitoreo
-
-- **Logs**: Centralizados vía stdout/stderr (capturar con EFK/Loki)
-- **Health Checks**: `/api/v1/health` (configurado en K8s probes)
-- **Metrics**: Prometheus-ready (agregar @nestjs/prometheus en futuro)

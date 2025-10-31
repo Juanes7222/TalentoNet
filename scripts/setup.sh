@@ -5,7 +5,7 @@
 
 set -e
 
-echo "🚀 Iniciando setup de TalentoNet..."
+echo "Iniciando setup de TalentoNet..."
 
 # Colores para output
 RED='\033[0;31m'
@@ -22,7 +22,7 @@ if ! command -v node &> /dev/null; then
 fi
 
 if ! command -v pnpm &> /dev/null; then
-    echo -e "${YELLOW}⚠️  pnpm no encontrado. Instalando...${NC}"
+    echo -e "${YELLOW} pnpm no encontrado. Instalando...${NC}"
     npm install -g pnpm
 fi
 
@@ -34,48 +34,48 @@ fi
 echo -e "${GREEN}✅ Prerequisitos verificados${NC}"
 
 # Instalar dependencias
-echo -e "${YELLOW}📦 Instalando dependencias...${NC}"
+echo -e "${YELLOW} Instalando dependencias...${NC}"
 pnpm install --frozen-lockfile
 
 # Configurar variables de entorno
-echo -e "${YELLOW}🔧 Configurando variables de entorno...${NC}"
+echo -e "${YELLOW} Configurando variables de entorno...${NC}"
 
 if [ ! -f packages/backend/.env ]; then
     cp packages/backend/.env.example packages/backend/.env
-    echo -e "${GREEN}✅ Archivo .env creado en backend${NC}"
-    echo -e "${YELLOW}⚠️  IMPORTANTE: Edita packages/backend/.env con valores reales${NC}"
+    echo -e "${GREEN} Archivo .env creado en backend${NC}"
+    echo -e "${YELLOW}  IMPORTANTE: Edita packages/backend/.env con valores reales${NC}"
 else
-    echo -e "${GREEN}✅ .env ya existe en backend${NC}"
+    echo -e "${GREEN} .env ya existe en backend${NC}"
 fi
 
 # Iniciar servicios con Docker Compose
-echo -e "${YELLOW}🐳 Iniciando servicios Docker (PostgreSQL, RabbitMQ, MinIO)...${NC}"
+echo -e "${YELLOW} Iniciando servicios Docker (PostgreSQL, RabbitMQ, MinIO)...${NC}"
 docker-compose -f infra/docker-compose.yml up -d postgres rabbitmq minio
 
-echo -e "${YELLOW}⏳ Esperando a que PostgreSQL esté listo...${NC}"
+echo -e "${YELLOW} Esperando a que PostgreSQL esté listo...${NC}"
 sleep 10
 
 # Ejecutar migraciones
-echo -e "${YELLOW}🗄️  Ejecutando migraciones de base de datos...${NC}"
+echo -e "${YELLOW}  Ejecutando migraciones de base de datos...${NC}"
 cd packages/backend
-pnpm migration:run || echo -e "${YELLOW}⚠️  Migraciones fallaron (puede ser normal si ya están aplicadas)${NC}"
+pnpm migration:run || echo -e "${YELLOW}  Migraciones fallaron (puede ser normal si ya están aplicadas)${NC}"
 cd ../..
 
 # Ejecutar seeds
-echo -e "${YELLOW}🌱 Cargando datos de prueba (seed)...${NC}"
+echo -e "${YELLOW} Cargando datos de prueba (seed)...${NC}"
 cd packages/backend
-pnpm seed:run || echo -e "${YELLOW}⚠️  Seed falló (puede ser normal si ya se ejecutó)${NC}"
+pnpm seed:run || echo -e "${YELLOW}  Seed falló (puede ser normal si ya se ejecutó)${NC}"
 cd ../..
 
 # Crear bucket en MinIO
-echo -e "${YELLOW}🪣 Configurando bucket en MinIO...${NC}"
+echo -e "${YELLOW} Configurando bucket en MinIO...${NC}"
 docker exec talentonet-minio mc alias set local http://localhost:9000 minioadmin minioadmin || true
-docker exec talentonet-minio mc mb local/talentonet-documents || echo -e "${YELLOW}⚠️  Bucket ya existe${NC}"
+docker exec talentonet-minio mc mb local/talentonet-documents || echo -e "${YELLOW} Bucket ya existe${NC}"
 docker exec talentonet-minio mc anonymous set download local/talentonet-documents || true
 
 echo ""
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}✅ Setup completado exitosamente!${NC}"
+echo -e "${GREEN}  Setup completado exitosamente!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 echo -e "${YELLOW}Próximos pasos:${NC}"
