@@ -135,21 +135,21 @@ BEGIN
                 true
             ) RETURNING id INTO new_contract_id;
 
-            -- Insertar afiliaciones
-            INSERT INTO affiliations (employee_id, entity_type, entity_name, entity_code, affiliation_number, start_date)
+            -- Insertar afiliaciones con nueva estructura
+            INSERT INTO affiliations (employee_id, tipo, proveedor, codigo_proveedor, numero_afiliacion_plain, fecha_afiliacion, estado)
             VALUES 
                 (new_employee_id, 'EPS', 
-                 CASE (i % 3) WHEN 0 THEN 'SURA' WHEN 1 THEN 'Sanitas' ELSE 'Compensar' END,
+                 CASE (i % 3) WHEN 0 THEN 'SURA EPS' WHEN 1 THEN 'Sanitas' ELSE 'Compensar' END,
                  'EPS00' || (i % 3 + 1), 'AFF-EPS-' || LPAD(i::TEXT, 6, '0'),
-                 DATE (hire_year || '-' || LPAD(((i % 12) + 1)::TEXT, 2, '0') || '-01')),
+                 DATE (hire_year || '-' || LPAD(((i % 12) + 1)::TEXT, 2, '0') || '-01'), 'activo'),
                 (new_employee_id, 'AFP',
                  CASE (i % 3) WHEN 0 THEN 'Porvenir' WHEN 1 THEN 'Protección' ELSE 'Colfondos' END,
                  'AFP00' || (i % 3 + 1), 'AFF-AFP-' || LPAD(i::TEXT, 6, '0'),
-                 DATE (hire_year || '-' || LPAD(((i % 12) + 1)::TEXT, 2, '0') || '-01')),
+                 DATE (hire_year || '-' || LPAD(((i % 12) + 1)::TEXT, 2, '0') || '-01'), 'activo'),
                 (new_employee_id, 'ARL',
                  CASE (i % 2) WHEN 0 THEN 'SURA ARL' ELSE 'Positiva' END,
                  'ARL00' || (i % 2 + 1), 'AFF-ARL-' || LPAD(i::TEXT, 6, '0'),
-                 DATE (hire_year || '-' || LPAD(((i % 12) + 1)::TEXT, 2, '0') || '-01'));
+                 DATE (hire_year || '-' || LPAD(((i % 12) + 1)::TEXT, 2, '0') || '-01'), 'activo');
 
             -- Insertar nómina de los últimos 3 meses para empleados activos
             IF i % 15 != 0 THEN
