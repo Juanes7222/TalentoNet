@@ -50,12 +50,16 @@ pnpm docker:up
 # 4. Ejecutar migraciones
 pnpm migrate
 
-# 5. Cargar datos de prueba (seed)
-pnpm seed
+# 5. Cargar datos de prueba (empleados, vacantes, candidatos, afiliaciones)
+pnpm seed:load
 
 # 6. Iniciar desarrollo
 pnpm dev
 ```
+
+> **💡 Windows:** También puedes usar `.\scripts\setup.ps1` para automatizar todo el proceso.
+> 
+> **💡 Linux/macOS:** También puedes usar `./scripts/setup.sh` (recuerda dar permisos: `chmod +x scripts/setup.sh`)
 
 La aplicación estará disponible en:
 - **Frontend**: http://localhost:5173
@@ -75,12 +79,15 @@ pnpm lint                # Linting de código
 
 # Base de datos
 pnpm migrate             # Ejecuta migraciones
-pnpm seed                # Carga datos de prueba
+pnpm seed:load           # Carga datos de prueba (empleados, vacantes, afiliaciones)
+pnpm db:reset            # Resetea BD completamente y recarga datos
 
 # Docker
 pnpm docker:up           # Inicia contenedores
 pnpm docker:down         # Detiene contenedores
 ```
+
+> **Nota:** Para más detalles sobre gestión de datos, ver [scripts/README.md](scripts/README.md)
 
 ## Testing
 
@@ -99,10 +106,17 @@ pnpm cypress:open        # E2E tests con Cypress
 
 ## Autenticación
 
-Usuarios de prueba (después de ejecutar seed):
+Usuarios de prueba (después de ejecutar `pnpm seed:load`):
 
 - **Admin**: admin@talentonet.com / Password123!
 - **RH**: rh@talentonet.com / Password123!
+
+**Datos de prueba incluidos:**
+- 30 empleados con contratos y afiliaciones
+- 2 vacantes abiertas (Desarrollador Full Stack y Analista de RRHH)
+- 4 candidatos en diferentes estados del proceso
+- 3 entrevistas programadas/completadas
+- Proveedores de seguridad social (ARL, EPS, AFP, Cajas)
 - **Empleado**: empleado1@talentonet.com / ChangeMe123!
 
 ## API Documentation
