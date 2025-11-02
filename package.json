@@ -10,6 +10,8 @@
     "lint": "pnpm --recursive lint",
     "migrate": "pnpm --filter backend migrate:run",
     "seed": "pnpm --filter backend seed:run",
+    "seed:load": "node scripts/run-seed-data.js",
+    "db:reset": "node scripts/run-reset-db.js",
     "docker:up": "docker-compose -f infra/docker-compose.yml up -d",
     "docker:down": "docker-compose -f infra/docker-compose.yml down"
   },

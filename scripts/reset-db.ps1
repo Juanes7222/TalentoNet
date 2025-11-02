@@ -18,27 +18,27 @@ Write-Host ""
 try {
     docker ps *>$null
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "❌ Docker Desktop no está corriendo" -ForegroundColor Red
+        Write-Host " Docker Desktop no está corriendo" -ForegroundColor Red
         exit 1
     }
 } catch {
-    Write-Host "❌ Docker Desktop no está corriendo" -ForegroundColor Red
+    Write-Host " Docker Desktop no está corriendo" -ForegroundColor Red
     exit 1
 }
 
 # Verificar que PostgreSQL esté corriendo
 $postgresRunning = docker ps --filter "name=talentonet-postgres" --filter "status=running" --format "{{.Names}}"
 if (-not $postgresRunning) {
-    Write-Host "❌ PostgreSQL no está corriendo" -ForegroundColor Red
+    Write-Host " PostgreSQL no está corriendo" -ForegroundColor Red
     Write-Host "   Ejecuta primero: pnpm docker:up" -ForegroundColor Yellow
     exit 1
 }
 
-Write-Host "✅ PostgreSQL está corriendo" -ForegroundColor Green
+Write-Host " PostgreSQL está corriendo" -ForegroundColor Green
 Write-Host ""
 
 # Paso 1: Eliminar todas las tablas
-Write-Host "🗑️ Eliminando todas las tablas..." -ForegroundColor Yellow
+Write-Host " Eliminando todas las tablas..." -ForegroundColor Yellow
 $env:PGPASSWORD = "talentonet_secret"
 docker exec -i talentonet-postgres psql -U talentonet -d talentonet_db -c "
 DROP SCHEMA public CASCADE;
@@ -48,16 +48,16 @@ GRANT ALL ON SCHEMA public TO public;
 " 2>&1 | Out-Null
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "✅ Tablas eliminadas" -ForegroundColor Green
+    Write-Host " Tablas eliminadas" -ForegroundColor Green
 } else {
-    Write-Host "❌ Error al eliminar tablas" -ForegroundColor Red
+    Write-Host " Error al eliminar tablas" -ForegroundColor Red
     exit 1
 }
 
 Write-Host ""
 
 # Paso 2: Ejecutar migraciones
-Write-Host "🗄️ Ejecutando migraciones..." -ForegroundColor Yellow
+Write-Host " Ejecutando migraciones..." -ForegroundColor Yellow
 
 $migrationFiles = Get-ChildItem "packages\backend\migrations\*.sql" | Sort-Object Name
 
@@ -69,16 +69,16 @@ foreach ($migration in $migrationFiles) {
     if ($LASTEXITCODE -eq 0) {
         $migrationSuccess++
     } else {
-        Write-Host "   ❌ Error en $($migration.Name)" -ForegroundColor Red
+        Write-Host "    Error en $($migration.Name)" -ForegroundColor Red
         exit 1
     }
 }
 
-Write-Host "✅ $migrationSuccess migraciones ejecutadas" -ForegroundColor Green
+Write-Host " $migrationSuccess migraciones ejecutadas" -ForegroundColor Green
 Write-Host ""
 
 # Paso 3: Ejecutar seeds
-Write-Host "🌱 Cargando datos de prueba..." -ForegroundColor Yellow
+Write-Host " Cargando datos de prueba..." -ForegroundColor Yellow
 Write-Host ""
 
 $seedFiles = @(
@@ -96,7 +96,7 @@ foreach ($seedFile in $seedFiles) {
         Get-Content $seedFile | docker exec -i talentonet-postgres psql -U talentonet -d talentonet_db 2>&1 | Out-Null
         
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "   ✅ $fileName completado" -ForegroundColor Green
+            Write-Host "    $fileName completado" -ForegroundColor Green
             $seedSuccess++
         }
     }
@@ -104,7 +104,7 @@ foreach ($seedFile in $seedFiles) {
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
-Write-Host "✅ Base de datos reseteada exitosamente!" -ForegroundColor Green
+Write-Host " Base de datos reseteada exitosamente!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "Datos de prueba cargados:" -ForegroundColor Yellow
