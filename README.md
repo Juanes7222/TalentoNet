@@ -57,9 +57,9 @@ pnpm seed:load
 pnpm dev
 ```
 
-> **💡 Windows:** También puedes usar `.\scripts\setup.ps1` para automatizar todo el proceso.
+> **  Windows:** También puedes usar `.\scripts\setup.ps1` para automatizar todo el proceso.
 > 
-> **💡 Linux/macOS:** También puedes usar `./scripts/setup.sh` (recuerda dar permisos: `chmod +x scripts/setup.sh`)
+> **  Linux/macOS:** También puedes usar `./scripts/setup.sh` (recuerda dar permisos: `chmod +x scripts/setup.sh`)
 
 La aplicación estará disponible en:
 - **Frontend**: http://localhost:5173

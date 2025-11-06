@@ -22,16 +22,16 @@ async function runSeeds() {
 
     // Leer y ejecutar archivo de seed
     const seedPath = join(__dirname, '..', '..', 'migrations', '001_seed_employees.sql');
-    console.log(`📂 Leyendo seed desde: ${seedPath}`);
+    console.log(` Leyendo seed desde: ${seedPath}`);
     
     const seedSQL = readFileSync(seedPath, 'utf-8');
     
-    console.log('🚀 Ejecutando seed...');
+    console.log(' Ejecutando seed...');
     await client.query(seedSQL);
     
-    console.log('✅ Seed ejecutado exitosamente');
+    console.log(' Seed ejecutado exitosamente');
   } catch (error) {
-    console.error('❌ Error ejecutando seed:', error);
+    console.error(' Error ejecutando seed:', error);
     process.exit(1);
   } finally {
     await client.end();
