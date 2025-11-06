@@ -29,7 +29,7 @@ export class YeminusAdapter {
 
   async sendAffiliation(payload: YeminusAffiliationPayload): Promise<{ transactionId: string; status: string }> {
     // STUB: implementación real haría HTTP request a Yéminus API
-    console.log('📤 [STUB] Enviando afiliación a Yéminus:', payload);
+    console.log('  [STUB] Enviando afiliación a Yéminus:', payload);
 
     // Simular respuesta exitosa
     const transactionId = `YEM-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -52,7 +52,7 @@ export class YeminusAdapter {
 
   async getStatus(transactionId: string): Promise<{ status: string; details: any }> {
     // STUB: consultar estado de transacción en Yéminus
-    console.log('📥 [STUB] Consultando estado de transacción:', transactionId);
+    console.log('  [STUB] Consultando estado de transacción:', transactionId);
 
     return {
       status: 'COMPLETED',
@@ -72,7 +72,7 @@ export class YeminusAdapter {
       }
 
       const delayMs = Math.pow(2, attempt) * 1000; // Exponential backoff
-      console.log(`⏳ Reintentando en ${delayMs}ms (intento ${attempt + 1}/${this.maxRetries})`);
+      console.log(`  Reintentando en ${delayMs}ms (intento ${attempt + 1}/${this.maxRetries})`);
 
       await new Promise(resolve => setTimeout(resolve, delayMs));
       return this.retryWithBackoff(fn, attempt + 1);

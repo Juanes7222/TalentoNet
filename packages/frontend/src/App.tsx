@@ -18,6 +18,8 @@ import AffiliationsListPage from './pages/affiliations/AffiliationsListPage';
 import AffiliationFormPage from './pages/affiliations/AffiliationFormPage';
 import AffiliationDetailPage from './pages/affiliations/AffiliationDetailPage';
 import AffiliationReportPage from './pages/affiliations/AffiliationReportPage';
+import PayrollPeriodsPage from './pages/payroll/PayrollPeriodsPage';
+import PayrollPeriodDetailPage from './pages/payroll/PayrollPeriodDetailPage';
 
 function App() {
   return (
@@ -49,6 +51,10 @@ function App() {
             <Route path="/affiliations/new" element={<AffiliationFormPage />} />
             <Route path="/affiliations/:id" element={<AffiliationDetailPage />} />
             <Route path="/affiliations/report" element={<AffiliationReportPage />} />
+            
+            {/* Rutas de nómina */}
+            <Route path="/payroll" element={<PayrollPeriodsPage />} />
+            <Route path="/payroll/:id" element={<PayrollPeriodDetailPage />} />
             
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Route>

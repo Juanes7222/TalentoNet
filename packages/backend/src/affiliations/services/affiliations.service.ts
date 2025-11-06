@@ -151,11 +151,13 @@ export class AffiliationsService {
 
   /**
    * Obtener una afiliación por ID
+   * Nota: La relación 'logs' está comentada en la entidad Affiliation.
+   * Los logs se obtienen a través del método getLogs() usando el repositorio de logs.
    */
   async findOne(id: string, includeDecryptedNumber = false): Promise<Affiliation> {
     const affiliation = await this.affiliationRepository.findOne({
       where: { id },
-      relations: ['employee', 'createdByUser', 'retiredByUser', 'logs'],
+      relations: ['employee', 'createdByUser', 'retiredByUser'],
     });
 
     if (!affiliation) {

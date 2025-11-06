@@ -84,7 +84,8 @@ Write-Host ""
 $seedFiles = @(
     "packages\backend\seeds\001_seed_employees.sql",
     "packages\backend\seeds\002_recruitment_data.sql",
-    "packages\backend\seeds\003_affiliations_data.sql"
+    "packages\backend\seeds\003_affiliations_data.sql",
+    "packages\backend\seeds\004_seed_payroll.sql"
 )
 
 $seedSuccess = 0
