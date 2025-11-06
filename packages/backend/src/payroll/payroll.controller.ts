@@ -30,7 +30,7 @@ interface RequestWithUser extends Request {
 @ApiTags('Payroll')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('api/payroll')
+@Controller('payroll')
 export class PayrollController {
   constructor(private readonly payrollService: PayrollService) {}
 

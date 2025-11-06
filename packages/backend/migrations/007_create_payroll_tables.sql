@@ -10,7 +10,7 @@ CREATE TABLE payroll_config (
     key VARCHAR(100) UNIQUE NOT NULL,
     value JSONB NOT NULL,
     description TEXT,
-    updated_by INTEGER REFERENCES users(id),
+    updated_by UUID REFERENCES users(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -27,10 +27,10 @@ CREATE TABLE payroll_period (
     fecha_fin DATE NOT NULL,
     estado VARCHAR(20) NOT NULL DEFAULT 'abierto' CHECK (estado IN ('abierto', 'liquidado', 'cerrado', 'aprobado')),
     descripcion TEXT,
-    created_by INTEGER REFERENCES users(id),
-    liquidated_by INTEGER REFERENCES users(id),
+    created_by UUID REFERENCES users(id),
+    liquidated_by UUID REFERENCES users(id),
     liquidated_at TIMESTAMP,
-    approved_by INTEGER REFERENCES users(id),
+    approved_by UUID REFERENCES users(id),
     approved_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -46,7 +46,7 @@ COMMENT ON COLUMN payroll_period.estado IS 'abierto: editable | liquidado: calcu
 -- Novedades de nómina
 CREATE TABLE payroll_novedad (
     id SERIAL PRIMARY KEY,
-    employee_id VARCHAR(36) NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    employee_id UUID NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
     payroll_period_id INTEGER REFERENCES payroll_period(id) ON DELETE CASCADE,
     tipo VARCHAR(50) NOT NULL,
     categoria VARCHAR(20) NOT NULL CHECK (categoria IN ('devengo', 'deduccion')),
@@ -55,7 +55,7 @@ CREATE TABLE payroll_novedad (
     fecha DATE NOT NULL,
     comentario TEXT,
     metadata JSONB,
-    created_by INTEGER REFERENCES users(id),
+    created_by UUID REFERENCES users(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -72,7 +72,7 @@ COMMENT ON COLUMN payroll_novedad.cantidad IS 'Para horas extras, número de hor
 CREATE TABLE payroll_entry (
     id SERIAL PRIMARY KEY,
     payroll_period_id INTEGER NOT NULL REFERENCES payroll_period(id) ON DELETE CASCADE,
-    employee_id VARCHAR(36) NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    employee_id UUID NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
     
     -- Devengos
     salario_base DECIMAL(15, 2) NOT NULL DEFAULT 0,
@@ -97,7 +97,7 @@ CREATE TABLE payroll_entry (
     detalles_json JSONB,
     
     -- Auditoría
-    calculated_by INTEGER REFERENCES users(id),
+    calculated_by UUID REFERENCES users(id),
     calculated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -117,11 +117,11 @@ COMMENT ON COLUMN payroll_entry.detalles_json IS 'Detalle completo del cálculo,
 CREATE TABLE payslip (
     id SERIAL PRIMARY KEY,
     payroll_entry_id INTEGER NOT NULL REFERENCES payroll_entry(id) ON DELETE CASCADE,
-    employee_id VARCHAR(36) NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    employee_id UUID NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
     pdf_s3_key VARCHAR(500),
     pdf_url TEXT,
     file_size INTEGER,
-    generated_by INTEGER REFERENCES users(id),
+    generated_by UUID REFERENCES users(id),
     generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     sent_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -144,7 +144,7 @@ CREATE TABLE payroll_export_log (
     file_s3_key VARCHAR(500),
     file_url TEXT,
     total_registros INTEGER,
-    exported_by INTEGER REFERENCES users(id),
+    exported_by UUID REFERENCES users(id),
     exported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     metadata JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
