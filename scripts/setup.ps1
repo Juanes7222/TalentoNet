@@ -80,17 +80,30 @@ Write-Host " Esperando a que PostgreSQL esté listo..." -ForegroundColor Yellow
 Start-Sleep -Seconds 10
 
 # Ejecutar migraciones
-Write-Host " Ejecutando migraciones de base de datos..." -ForegroundColor Yellow
+Write-Host "  Ejecutando migraciones de base de datos..." -ForegroundColor Yellow
 $env:PGPASSWORD = "talentonet_secret"
-Get-Content packages\backend\migrations\001_initial_schema.sql | docker exec -i talentonet-postgres psql -U talentonet -d talentonet_db
-if ($LASTEXITCODE -eq 0) {
-    Write-Host " Migraciones ejecutadas" -ForegroundColor Green
-} else {
-    Write-Host " Error en migraciones (puede ser que ya existan)" -ForegroundColor Yellow
+
+# Obtener todas las migraciones en orden
+$migrationFiles = Get-ChildItem "packages\backend\migrations\*.sql" | Sort-Object Name
+
+$migrationSuccess = 0
+foreach ($migration in $migrationFiles) {
+    $fileName = $migration.Name
+    Write-Host "   Ejecutando $fileName..." -ForegroundColor Cyan
+    Get-Content $migration.FullName | docker exec -i talentonet-postgres psql -U talentonet -d talentonet_db 2>&1 | Out-Null
+    
+    if ($LASTEXITCODE -eq 0) {
+        $migrationSuccess++
+    } else {
+        Write-Host "     Error en $fileName (puede ser que ya exista)" -ForegroundColor Yellow
+    }
 }
 
+Write-Host "  $migrationSuccess migraciones ejecutadas" -ForegroundColor Green
+Write-Host ""
+
 # Ejecutar seeds en orden
-Write-Host " Cargando datos de prueba (seeds)..." -ForegroundColor Yellow
+Write-Host "  Cargando datos de prueba (seeds)..." -ForegroundColor Yellow
 
 $seedFiles = @(
     "packages\backend\seeds\001_seed_employees.sql",
