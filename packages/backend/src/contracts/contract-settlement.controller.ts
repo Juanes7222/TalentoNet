@@ -57,32 +57,7 @@ export class ContractSettlementController {
     });
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Obtener contrato por ID' })
-  @ApiResponse({ status: 404, description: 'Contrato no encontrado' })
-  async findContract(@Param('id') id: string) {
-    return await this.contractRepository.findOne({
-      where: { id },
-      relations: ['employee'],
-    });
-  }
-
-  // ========== GENERAR LIQUIDACIÓN ==========
-
-  @Post(':id/settle')
-  @ApiOperation({ summary: 'Generar liquidación para un contrato' })
-  @ApiResponse({ status: 201, description: 'Liquidación creada exitosamente' })
-  @ApiResponse({ status: 400, description: 'Ya existe liquidación para este contrato' })
-  @ApiResponse({ status: 404, description: 'Contrato no encontrado' })
-  async createSettlement(
-    @Param('id') contractId: string,
-    @Body() dto: CreateSettlementDto,
-    @Request() req: RequestWithUser,
-  ) {
-    return await this.settlementService.generateSettlement(contractId, dto, req.user.userId);
-  }
-
-  // ========== LISTAR LIQUIDACIONES ==========
+  // ========== LISTAR LIQUIDACIONES (ANTES DE RUTAS DINÁMICAS) ==========
 
   @Get('settlements')
   @ApiOperation({ summary: 'Listar todas las liquidaciones' })
@@ -103,10 +78,37 @@ export class ContractSettlementController {
     return await this.settlementService.findByEmployee(employeeId);
   }
 
+  // ========== RUTAS DINÁMICAS DE CONTRATOS ==========
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtener contrato por ID' })
+  @ApiResponse({ status: 404, description: 'Contrato no encontrado' })
+  async findContract(@Param('id') id: string) {
+    return await this.contractRepository.findOne({
+      where: { id },
+      relations: ['employee'],
+    });
+  }
+
   @Get(':contractId/settlement')
   @ApiOperation({ summary: 'Obtener liquidación de un contrato específico' })
   async findSettlementByContract(@Param('contractId') contractId: string) {
     return await this.settlementService.findByContract(contractId);
+  }
+
+  // ========== GENERAR LIQUIDACIÓN ==========
+
+  @Post(':id/settle')
+  @ApiOperation({ summary: 'Generar liquidación para un contrato' })
+  @ApiResponse({ status: 201, description: 'Liquidación creada exitosamente' })
+  @ApiResponse({ status: 400, description: 'Ya existe liquidación para este contrato' })
+  @ApiResponse({ status: 404, description: 'Contrato no encontrado' })
+  async createSettlement(
+    @Param('id') contractId: string,
+    @Body() dto: CreateSettlementDto,
+    @Request() req: RequestWithUser,
+  ) {
+    return await this.settlementService.generateSettlement(contractId, dto, req.user.userId);
   }
 
   // ========== ACTUALIZAR LIQUIDACIÓN ==========
