@@ -5,6 +5,7 @@ import {
   Patch,
   Body,
   Param,
+  Query,
   UseGuards,
   Request,
   HttpCode,
@@ -13,6 +14,9 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ContractSettlementService } from './services/contract-settlement.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Contract } from '../payroll/contract.entity';
 import {
   CreateSettlementDto,
   UpdateSettlementDto,
@@ -33,7 +37,35 @@ interface RequestWithUser extends Request {
 @UseGuards(JwtAuthGuard)
 @Controller('contracts')
 export class ContractSettlementController {
-  constructor(private readonly settlementService: ContractSettlementService) {}
+  constructor(
+    private readonly settlementService: ContractSettlementService,
+    @InjectRepository(Contract)
+    private readonly contractRepository: Repository<Contract>,
+  ) {}
+
+  // ========== LISTAR CONTRATOS ==========
+
+  @Get()
+  @ApiOperation({ summary: 'Listar contratos (con filtro opcional por empleado)' })
+  @ApiResponse({ status: 200, description: 'Lista de contratos' })
+  async findContracts(@Query('employeeId') employeeId?: string) {
+    const where = employeeId ? { employeeId } : {};
+    return await this.contractRepository.find({
+      where,
+      relations: ['employee'],
+      order: { startDate: 'DESC' },
+    });
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtener contrato por ID' })
+  @ApiResponse({ status: 404, description: 'Contrato no encontrado' })
+  async findContract(@Param('id') id: string) {
+    return await this.contractRepository.findOne({
+      where: { id },
+      relations: ['employee'],
+    });
+  }
 
   // ========== GENERAR LIQUIDACIÓN ==========
 
