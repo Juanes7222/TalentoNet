@@ -1,84 +1,40 @@
-# Script para cargar datos de prueba en TalentoNet
-# Ejecuta todos los archivos SQL de seeds en orden
+# Script para cargar datos de prueba - Versión Modular
+# Importar módulos
+$ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+Import-Module "$ScriptPath\modules\db-utils.psm1" -Force
+Import-Module "$ScriptPath\modules\output-utils.psm1" -Force
+Import-Module "$ScriptPath\modules\workflow-utils.psm1" -Force
 
-Write-Host "🌱 Cargando datos de prueba en TalentoNet..." -ForegroundColor Cyan
-Write-Host ""
+Write-Header "Cargando datos de prueba en TalentoNet" -Color Cyan
 
-# Verificar que Docker esté corriendo
-try {
-    docker ps *>$null
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "  Docker Desktop no está corriendo" -ForegroundColor Red
-        exit 1
-    }
-} catch {
-    Write-Host "  Docker Desktop no está corriendo" -ForegroundColor Red
+# Verificar PostgreSQL
+if (-not (Invoke-PostgresCheck -StartIfNotRunning $false)) {
     exit 1
 }
 
-# Verificar que PostgreSQL esté corriendo
-$postgresRunning = docker ps --filter "name=talentonet-postgres" --filter "status=running" --format "{{.Names}}"
-if (-not $postgresRunning) {
-    Write-Host "  PostgreSQL no está corriendo" -ForegroundColor Red
-    Write-Host "   Ejecuta primero: pnpm docker:up" -ForegroundColor Yellow
+# Ejecutar seeds (automáticamente detecta todos los archivos .sql en seeds/)
+$seedFiles = Get-SeedFiles -SeedsPath "packages\backend\seeds"
+
+if ($seedFiles.Count -eq 0) {
+    Write-Error "No se encontraron archivos de seed"
+    Write-Info "Verifica que existan archivos .sql en packages\backend\seeds\"
     exit 1
 }
 
-Write-Host "  PostgreSQL está corriendo" -ForegroundColor Green
-Write-Host ""
+Write-Info "Se encontraron $($seedFiles.Count) archivos de seed"
 
-# Lista de archivos seed en orden
-$seedFiles = @(
-    "packages\backend\seeds\001_seed_employees.sql",
-    "packages\backend\seeds\002_recruitment_data.sql",
-    "packages\backend\seeds\003_affiliations_data.sql",
-    "packages\backend\seeds\004_seed_payroll.sql"
-)
-
-$seedSuccess = 0
-$seedErrors = 0
-$totalSeeds = $seedFiles.Count
-
-Write-Host " Ejecutando $totalSeeds archivos de seed..." -ForegroundColor Yellow
-Write-Host ""
-
-foreach ($seedFile in $seedFiles) {
-    $fileName = Split-Path $seedFile -Leaf
-    
-    if (Test-Path $seedFile) {
-        Write-Host " Ejecutando $fileName..." -ForegroundColor Cyan
-        
-        # Ejecutar el seed
-        $env:PGPASSWORD = "talentonet_secret"
-        Get-Content $seedFile | docker exec -i talentonet-postgres psql -U talentonet -d talentonet_db 2>&1 | Out-Null
-        
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "   $fileName completado exitosamente" -ForegroundColor Green
-            $seedSuccess++
-        } else {
-            Write-Host "    $fileName ejecutado con advertencias (puede ser que ya existan datos)" -ForegroundColor Yellow
-            $seedErrors++
-        }
-    } else {
-        Write-Host "    Archivo no encontrado: $seedFile" -ForegroundColor Red
-        $seedErrors++
-    }
-    
-    Write-Host ""
-}
+$seedResult = Invoke-Seeds -SeedFiles $seedFiles -Verbose $true
 
 # Resumen
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  Resumen de ejecución de seeds:" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "Total de seeds:        $totalSeeds" -ForegroundColor White
-Write-Host "Exitosos:              $seedSuccess" -ForegroundColor Green
-Write-Host "Con advertencias:      $seedErrors" -ForegroundColor Yellow
-Write-Host ""
+Write-Summary -Title "Resumen de ejecución de seeds" -Items @{
+    "Total de seeds" = "$($seedResult.Total)"
+    "Exitosos" = "$($seedResult.Success)"
+    "Con advertencias" = "$($seedResult.Failed)"
+} -Color Cyan
 
-if ($seedSuccess -eq $totalSeeds) {
-    Write-Host "  Todos los seeds se ejecutaron correctamente!" -ForegroundColor Green
-    Write-Host ""
+if ($seedResult.Success -eq $seedResult.Total) {
+    Write-Header "Todos los seeds se ejecutaron correctamente!" -Color Green
+    
     Write-Host "Datos de prueba cargados:" -ForegroundColor Yellow
     Write-Host "  • 30 empleados con contratos y afiliaciones" -ForegroundColor White
     Write-Host "  • 2 vacantes abiertas (Desarrollador y RRHH)" -ForegroundColor White
@@ -90,12 +46,10 @@ if ($seedSuccess -eq $totalSeeds) {
     Write-Host "  Admin:  admin@talentonet.com / Password123!" -ForegroundColor Green
     Write-Host "  RH:     rh@talentonet.com / Password123!" -ForegroundColor Green
     Write-Host ""
-} elseif ($seedSuccess -gt 0) {
-    Write-Host "  Seeds ejecutados parcialmente" -ForegroundColor Yellow
-    Write-Host "   Algunos datos pueden ya existir en la base de datos" -ForegroundColor Yellow
-    Write-Host ""
+} elseif ($seedResult.Success -gt 0) {
+    Write-Warning "Seeds ejecutados parcialmente"
+    Write-Info "Algunos datos pueden ya existir en la base de datos"
 } else {
-    Write-Host "  No se pudo ejecutar ningún seed" -ForegroundColor Red
-    Write-Host "   Verifica que la base de datos esté correctamente configurada" -ForegroundColor Yellow
-    Write-Host ""
+    Write-Error "No se pudo ejecutar ningún seed"
+    Write-Info "Verifica que la base de datos esté correctamente configurada"
 }

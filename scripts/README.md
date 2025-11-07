@@ -1,8 +1,168 @@
-# Scripts de Base de Datos - TalentoNet
+# Scripts de TalentoNet
 
-Este directorio contiene scripts para gestionar la base de datos y datos de prueba.
+Este directorio contiene scripts modulares para gestionar el proyecto TalentoNet.
 
-> ** Compatibilidad Multiplataforma:** Todos los scripts están disponibles en versiones para Windows (`.ps1`) y Linux/macOS (`.sh`). Los comandos `pnpm` detectan automáticamente tu sistema operativo y ejecutan el script correcto.
+> **✨ Arquitectura Modular:** Todos los scripts usan módulos reutilizables de PowerShell para mejor mantenibilidad y evitar duplicación de código.
+
+---
+
+## 📁 Estructura del Directorio
+
+```
+scripts/
+├── modules/              # 🎯 Módulos reutilizables (ver módulos/)
+│   ├── docker-utils.ps1  # Gestión de Docker
+│   ├── db-utils.ps1      # PostgreSQL, migraciones, seeds
+│   ├── node-utils.ps1    # Node.js y pnpm
+│   ├── env-utils.ps1     # Variables de entorno
+│   ├── minio-utils.ps1   # MinIO
+│   ├── output-utils.ps1  # Salida formateada
+│   ├── workflow-utils.ps1 # Flujos de trabajo completos
+│   └── README.md         # Documentación de módulos
+│
+├── examples/             # 📚 Scripts de ejemplo
+│   ├── seed-filtering-examples.ps1
+│   ├── load-basic-data.ps1
+│   └── README.md
+│
+├── setup.ps1            # ✨ Setup inicial completo
+├── reset-db.ps1         # ✨ Resetear base de datos
+├── seed-data.ps1        # ✨ Cargar datos de prueba
+├── run-migrations.ps1   # ✨ Ejecutar solo migraciones
+├── dev-helper.ps1       # ✨ Menú interactivo
+├── check-status.ps1     # ✨ Verificar estado del sistema
+│
+└── Documentación
+    ├── README.md              # Esta guía
+    ├── modules/README.md      # Docs de módulos
+    ├── QUICK_REFERENCE.md     # Referencia rápida
+    ├── MIGRATION_GUIDE.md     # Guía de uso
+    └── IMPROVEMENTS_SUMMARY.md # Resumen de mejoras
+```
+
+---
+
+## 🚀 Scripts Principales
+
+### `setup.ps1` - Setup Inicial Completo
+Configura el proyecto desde cero usando módulos reutilizables.
+
+**Uso:**
+```powershell
+.\scripts\setup.ps1
+```
+
+**Qué hace:**
+- ✅ Verifica prerequisitos (Node.js, pnpm, Docker)
+- 📦 Instala dependencias con pnpm
+- 📝 Configura archivos .env
+- 🐳 Inicia servicios Docker (PostgreSQL, RabbitMQ, MinIO)
+- 📋 Ejecuta migraciones de base de datos
+- 🌱 Carga datos de prueba (auto-detecta todos los seeds)
+- 🪣 Configura bucket de MinIO
+
+---
+
+### `reset-db.ps1` - Resetear Base de Datos
+Elimina todos los datos y los recarga desde cero.
+
+**⚠️ ADVERTENCIA:** Esto eliminará TODOS los datos.
+
+**Uso:**
+```powershell
+.\scripts\reset-db.ps1
+```
+
+**Qué hace:**
+- 🗑️ Elimina todas las tablas
+- 📋 Ejecuta todas las migraciones
+- 🌱 Carga datos de prueba
+
+---
+
+### `seed-data.ps1` - Cargar Datos de Prueba
+Carga solo los datos de prueba sin alterar la estructura.
+
+**Uso:**
+```powershell
+.\scripts\seed-data.ps1
+```
+
+**Qué hace:**
+- 🔍 Auto-detecta todos los archivos .sql en `packages/backend/seeds/`
+- 🌱 Ejecuta seeds en orden alfabético
+- 📊 Muestra resumen de resultados
+
+---
+
+### `run-migrations.ps1` - Ejecutar Solo Migraciones
+Ejecuta únicamente las migraciones sin tocar seeds.
+
+**Uso:**
+```powershell
+.\scripts\run-migrations.ps1
+```
+
+**Qué hace:**
+- 📋 Ejecuta archivos de migración en orden
+- 📊 Muestra resumen de migraciones aplicadas
+
+---
+
+### `dev-helper.ps1` - Menú Interactivo
+Menú interactivo con todas las operaciones comunes.
+
+**Uso:**
+```powershell
+.\scripts\dev-helper.ps1
+```
+
+**Opciones disponibles:**
+1. 🚀 Setup inicial completo
+2. 🐳 Iniciar servicios Docker
+3. 🛑 Detener servicios Docker
+4. 📋 Ejecutar migraciones
+5. 🌱 Cargar datos de prueba
+6. 🔄 Resetear base de datos
+7. ✅ Verificar estado del sistema
+8. 📝 Inicializar archivos .env
+9. 🪣 Configurar bucket MinIO
+
+---
+
+### `check-status.ps1` - Verificar Estado
+Verifica el estado de Docker, contenedores y PostgreSQL.
+
+**Uso:**
+```powershell
+.\scripts\check-status.ps1
+```
+
+---
+
+## 📚 Módulos y Documentación
+
+### Módulos Disponibles
+
+Ver documentación completa en [`modules/README.md`](modules/README.md)
+
+- **docker-utils.ps1** - Gestión de Docker y contenedores
+- **db-utils.ps1** - PostgreSQL, migraciones y seeds (con auto-detección)
+- **node-utils.ps1** - Node.js y pnpm
+- **env-utils.ps1** - Archivos .env
+- **minio-utils.ps1** - MinIO y buckets
+- **output-utils.ps1** - Salida formateada con colores
+- **workflow-utils.ps1** - Flujos de trabajo completos de alto nivel
+
+### Documentación Adicional
+
+- **[modules/README.md](modules/README.md)** - Documentación completa de módulos
+- **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Referencia rápida de funciones
+- **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** - Guía de uso y mejores prácticas
+- **[examples/README.md](examples/README.md)** - Ejemplos de scripts personalizados
+- **[IMPROVEMENTS_SUMMARY.md](IMPROVEMENTS_SUMMARY.md)** - Resumen de mejoras
+
+---
 
 ##  Scripts Disponibles
 
@@ -155,14 +315,19 @@ DB_PASSWORD=talentonet_secret
 DB_DATABASE=talentonet_db
 ```
 
-## Notas
+---
 
-- Los seeds ejecutan en orden numérico (001, 002, 003)
-- Las contraseñas usan bcrypt con salt rounds = 10
-- Los números de afiliación en el seed 003 usan cifrado (en producción se cifran con clave del entorno)
-- Cada seed incluye validaciones para evitar duplicados
+## 📖 Documentación Completa
 
-## Flujo de Trabajo Recomendado
+- **[modules/README.md](modules/README.md)** - Documentación de todos los módulos
+- **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Referencia rápida de funciones
+- **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** - Guía de uso y patrones
+- **[examples/README.md](examples/README.md)** - Ejemplos de scripts personalizados
+- **[IMPROVEMENTS_SUMMARY.md](IMPROVEMENTS_SUMMARY.md)** - Resumen de mejoras
+
+---
+
+## 🎯 Flujo de Trabajo Recomendado
 
 ### Primera vez (setup completo)
 ```powershell
@@ -171,21 +336,30 @@ DB_DATABASE=talentonet_db
 
 ### Desarrollo diario
 ```powershell
+# Opción 1: Menú interactivo
+.\scripts\dev-helper.ps1
+
+# Opción 2: Comandos directos
 pnpm docker:up      # Inicia servicios
 pnpm dev            # Inicia backend + frontend
 ```
 
 ### Agregar más datos de prueba
 ```powershell
-pnpm seed:load
+.\scripts\seed-data.ps1
 ```
 
 ### Empezar desde cero
 ```powershell
-pnpm db:reset
+.\scripts\reset-db.ps1
 ```
 
 ### Detener servicios
 ```powershell
 pnpm docker:down
 ```
+
+---
+
+**Documentación actualizada - Noviembre 2025**
+
