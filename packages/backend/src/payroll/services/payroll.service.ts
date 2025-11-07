@@ -199,25 +199,40 @@ export class PayrollService {
 
     for (const employeeId of employeeIds) {
       try {
+        const fechaInicio = new Date(period.fechaInicio as any);
+        const fechaFin = new Date(period.fechaFin as any);
+
         const calculation = await this.calculationService.calculatePayroll(
           employeeId,
           periodId,
-          period.fechaInicio,
-          period.fechaFin,
+          fechaInicio,
+          fechaFin,
         );
 
-        // Verificar si ya existe una liquidación para este empleado
         let entry = await this.entryRepository.findOne({
           where: { payrollPeriodId: periodId, employeeId },
         });
 
         if (entry) {
-          // Actualizar
-          Object.assign(entry, calculation);
+          entry.payrollPeriodId = periodId;
+          entry.employeeId = calculation.employeeId;
+          entry.salarioBase = calculation.salarioBase as any;
+          entry.horasExtras = calculation.horasExtras as any;
+          entry.comisiones = calculation.comisiones as any;
+          entry.bonificaciones = calculation.bonificaciones as any;
+          entry.otrosDevengos = calculation.otrosDevengos as any;
+          entry.totalDevengado = calculation.totalDevengado as any;
+          entry.salud = calculation.salud as any;
+          entry.pension = calculation.pension as any;
+          entry.fondoSolidaridad = calculation.fondoSolidaridad as any;
+          entry.retencionFuente = calculation.retencionFuente as any;
+          entry.otrasDeducciones = calculation.otrasDeducciones as any;
+          entry.totalDeducido = calculation.totalDeducido as any;
+          entry.neto = calculation.neto as any;
+          entry.detallesJson = calculation.detallesJson;
           entry.calculatedBy = userId;
           entry.calculatedAt = new Date();
         } else {
-          // Crear nuevo
           entry = this.entryRepository.create({
             ...calculation,
             payrollPeriodId: periodId,

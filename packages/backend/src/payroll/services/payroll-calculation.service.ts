@@ -241,14 +241,11 @@ export class PayrollCalculationService {
     porcentajeSalud: number,
     porcentajePension: number,
   ) {
-    // Base de cotización (normalmente el salario base)
     const baseCotizacion = salarioMensual;
 
-    // Salud y pensión
     const salud = (baseCotizacion * porcentajeSalud) / 100;
     const pension = (baseCotizacion * porcentajePension) / 100;
 
-    // Fondo de solidaridad (solo si gana más de 4 SMMLV)
     const salarioMinimo = await this.configService.getSalarioMinimo();
     const porcentajeFondo = await this.configService.getPorcentajeFondoSolidaridad();
     let fondoSolidaridad = 0;
@@ -256,16 +253,13 @@ export class PayrollCalculationService {
       fondoSolidaridad = (baseCotizacion * porcentajeFondo) / 100;
     }
 
-    // Retención en la fuente (simplificado)
     let retencionFuente = 0;
     const baseRetencion = await this.configService.getBaseRetencionFuente();
     const baseUvt = baseRetencion.uvt * baseRetencion.uvtValue;
     if (salarioMensual > baseUvt) {
-      // Aplicar retención progresiva (simplificado al 10%)
       retencionFuente = ((salarioMensual - baseUvt) * 10) / 100;
     }
 
-    // Otras deducciones (préstamos, embargos, etc.)
     const deduccionesNovedades = novedades.filter((n) => n.categoria === 'deduccion');
     let otrasDeducciones = 0;
     const detalle: any[] = [];
@@ -306,14 +300,14 @@ export class PayrollCalculationService {
   /**
    * Calcula días entre dos fechas
    */
-  private calculateDays(fechaInicio: Date, fechaFin: Date): number {
-    const diff = fechaFin.getTime() - fechaInicio.getTime();
+  private calculateDays(fechaInicio: Date | string, fechaFin: Date | string): number {
+    const start = fechaInicio instanceof Date ? fechaInicio : new Date(fechaInicio as any);
+    const end = fechaFin instanceof Date ? fechaFin : new Date(fechaFin as any);
+
+    const diff = end.getTime() - start.getTime();
     return Math.ceil(diff / (1000 * 60 * 60 * 24)) + 1; // +1 para incluir ambos días
   }
 
-  /**
-   * Redondea a 2 decimales
-   */
   private round(value: number): number {
     return Math.round(value * 100) / 100;
   }
