@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      puppeteer:
+        specifier: ^21.11.0
+        version: 21.11.0(typescript@5.9.3)
     devDependencies:
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.21.0

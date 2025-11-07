@@ -15,6 +15,7 @@ import { DatabaseModule } from './database/database.module';
 import { RecruitmentModule } from './recruitment/recruitment.module';
 import { AffiliationsModule } from './affiliations/affiliations.module';
 import { ContractsModule } from './contracts/contracts.module';
+import { CertificationsModule } from './certifications/certifications.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { ContractsModule } from './contracts/contracts.module';
     RecruitmentModule,
     AffiliationsModule,
     ContractsModule,
+    CertificationsModule,
   ],
   providers: [
     {

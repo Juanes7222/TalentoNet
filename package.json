@@ -25,5 +25,8 @@
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "dependencies": {
+    "puppeteer": "^21.11.0"
   }
 }
