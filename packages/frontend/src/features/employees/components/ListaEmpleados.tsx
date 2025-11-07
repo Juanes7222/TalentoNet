@@ -1,23 +1,95 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { useEmployees, useDeleteEmployee } from '../hooks';
 import type { Employee } from '../types';
 
+// Componente memoizado para los filtros
+const SearchFilters = memo(({ 
+  searchInput, 
+  setSearchInput, 
+  searchQuery,
+  statusFilter, 
+  setStatusFilter,
+  setPage 
+}: {
+  searchInput: string;
+  setSearchInput: (value: string) => void;
+  searchQuery: string;
+  statusFilter: string;
+  setStatusFilter: (value: string) => void;
+  setPage: (page: number) => void;
+}) => (
+  <div className="card">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Buscar
+        </label>
+        <input
+          type="text"
+          placeholder="Nombre o identificación..."
+          className="input"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          autoComplete="off"
+        />
+        {searchInput !== searchQuery && (
+          <p className="text-xs text-gray-500 mt-1">Buscando...</p>
+        )}
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Estado
+        </label>
+        <select
+          className="input"
+          value={statusFilter}
+          onChange={(e) => {
+            setStatusFilter(e.target.value);
+            setPage(1);
+          }}
+        >
+          <option value="">Todos</option>
+          <option value="active">Activos</option>
+          <option value="inactive">Inactivos</option>
+          <option value="suspended">Suspendidos</option>
+        </select>
+      </div>
+    </div>
+  </div>
+));
+
+SearchFilters.displayName = 'SearchFilters';
+
 export default function ListaEmpleados() {
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState(''); // Input del usuario
+  const [searchQuery, setSearchQuery] = useState(''); // Query real para la API
   const [statusFilter, setStatusFilter] = useState<string>('');
 
-  const { data, isLoading, error } = useEmployees({
-    search,
+  // Debounce: actualizar searchQuery después de 500ms de inactividad
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setSearchQuery(searchInput);
+      setPage(1); // Reset a página 1 cuando cambia la búsqueda
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchInput]);
+
+  // Memoizar los parámetros para evitar re-renders innecesarios
+  const queryParams = useMemo(() => ({
+    search: searchQuery,
     status: statusFilter || undefined,
     page,
     limit: 10,
-  });
+  }), [searchQuery, statusFilter, page]);
+
+  const { data, isLoading, error } = useEmployees(queryParams);
 
   const deleteEmployee = useDeleteEmployee();
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = useCallback(async (id: string) => {
     if (window.confirm('¿Está seguro de desactivar este empleado?')) {
       try {
         await deleteEmployee.mutateAsync(id);
@@ -26,9 +98,9 @@ export default function ListaEmpleados() {
         alert('Error al desactivar empleado');
       }
     }
-  };
+  }, [deleteEmployee]);
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
@@ -57,37 +129,14 @@ export default function ListaEmpleados() {
       </div>
 
       {/* Filtros */}
-      <div className="card">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Buscar
-            </label>
-            <input
-              type="text"
-              placeholder="Nombre o identificación..."
-              className="input"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Estado
-            </label>
-            <select
-              className="input"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="">Todos</option>
-              <option value="active">Activos</option>
-              <option value="inactive">Inactivos</option>
-              <option value="suspended">Suspendidos</option>
-            </select>
-          </div>
-        </div>
-      </div>
+      <SearchFilters
+        searchInput={searchInput}
+        setSearchInput={setSearchInput}
+        searchQuery={searchQuery}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        setPage={setPage}
+      />
 
       {/* Tabla */}
       <div className="card overflow-hidden p-0">

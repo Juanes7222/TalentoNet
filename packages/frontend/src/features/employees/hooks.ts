@@ -13,6 +13,8 @@ export const useEmployees = (params?: {
   return useQuery({
     queryKey: ['employees', params],
     queryFn: () => employeesApi.getAll(params),
+    placeholderData: (previousData) => previousData,
+    staleTime: 1000,
   });
 };
 

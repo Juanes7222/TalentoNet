@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, ILike } from 'typeorm';
+import { Repository, Like, ILike, Or } from 'typeorm';
 import { Employee, EmployeeStatus } from './employee.entity';
 import { CreateEmployeeDto, UpdateEmployeeDto, EmployeeFilterDto } from './dto/employee.dto';
 import { UsersService } from '../users/users.service';
@@ -63,32 +63,37 @@ export class EmployeesService {
     const { search, status, city, department, page = 1, limit = 10 } = filters;
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    // Construir query builder para búsqueda más flexible
+    const queryBuilder = this.employeesRepository.createQueryBuilder('employee')
+      .leftJoinAndSelect('employee.user', 'user');
 
+    // Si hay búsqueda, buscar en múltiples campos
     if (search) {
-      // Búsqueda en múltiples campos (simplificada, en producción usar full-text search)
-      where.firstName = ILike(`%${search}%`);
+      queryBuilder.andWhere(
+        '(employee.firstName ILIKE :search OR employee.lastName ILIKE :search OR employee.identificationNumber ILIKE :search)',
+        { search: `%${search}%` }
+      );
     }
 
     if (status) {
-      where.status = status;
+      queryBuilder.andWhere('employee.status = :status', { status });
     }
 
     if (city) {
-      where.city = city;
+      queryBuilder.andWhere('employee.city = :city', { city });
     }
 
     if (department) {
-      where.department = department;
+      queryBuilder.andWhere('employee.department = :department', { department });
     }
 
-    const [data, total] = await this.employeesRepository.findAndCount({
-      where,
-      skip,
-      take: limit,
-      relations: ['user'],
-      order: { createdAt: 'DESC' },
-    });
+    // Paginación y ordenamiento
+    queryBuilder
+      .orderBy('employee.createdAt', 'DESC')
+      .skip(skip)
+      .take(limit);
+
+    const [data, total] = await queryBuilder.getManyAndCount();
 
     return {
       data,
