@@ -20,13 +20,13 @@ import { CertificationStatus } from './entities/certification-request.entity';
 import * as fs from 'fs';
 
 @ApiTags('Certifications')
-@Controller('api/v1/certifications')
+@Controller('certifications')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class CertificationsController {
   constructor(private readonly certificationsService: CertificationsService) {}
 
-  @Post('request')
+  @Post()
   @ApiOperation({ summary: 'Solicitar una certificación laboral' })
   @ApiResponse({ status: 201, description: 'Solicitud creada exitosamente' })
   async create(@Body() createDto: CreateCertificationDto) {
@@ -46,21 +46,6 @@ export class CertificationsController {
       estado,
       requesterEmail,
     });
-  }
-
-  @Get(':id')
-  @ApiOperation({ summary: 'Obtener una certificación por ID' })
-  @ApiResponse({ status: 200, description: 'Certificación encontrada' })
-  @ApiResponse({ status: 404, description: 'Certificación no encontrada' })
-  async findOne(@Param('id') id: string) {
-    return await this.certificationsService.findOne(id);
-  }
-
-  @Patch(':id/status')
-  @ApiOperation({ summary: 'Actualizar el estado de una certificación' })
-  @ApiResponse({ status: 200, description: 'Estado actualizado' })
-  async updateStatus(@Param('id') id: string, @Body() updateDto: UpdateCertificationStatusDto) {
-    return await this.certificationsService.updateStatus(id, updateDto);
   }
 
   @Post(':id/generate')
@@ -88,5 +73,20 @@ export class CertificationsController {
     );
 
     fileStream.pipe(res);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtener una certificación por ID' })
+  @ApiResponse({ status: 200, description: 'Certificación encontrada' })
+  @ApiResponse({ status: 404, description: 'Certificación no encontrada' })
+  async findOne(@Param('id') id: string) {
+    return await this.certificationsService.findOne(id);
+  }
+
+  @Patch(':id/status')
+  @ApiOperation({ summary: 'Actualizar el estado de una certificación' })
+  @ApiResponse({ status: 200, description: 'Estado actualizado' })
+  async updateStatus(@Param('id') id: string, @Body() updateDto: UpdateCertificationStatusDto) {
+    return await this.certificationsService.updateStatus(id, updateDto);
   }
 }

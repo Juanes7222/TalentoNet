@@ -22,6 +22,8 @@ import PayrollPeriodsPage from './pages/payroll/PayrollPeriodsPage';
 import PayrollPeriodDetailPage from './pages/payroll/PayrollPeriodDetailPage';
 import SettlementsListPage from './pages/settlements/SettlementsListPage';
 import SettlementDetailPage from './pages/settlements/SettlementDetailPage';
+import CertificationsListPage from './pages/certifications/CertificationsListPage';
+import NewCertificationPage from './pages/certifications/NewCertificationPage';
 
 function App() {
   return (
@@ -61,6 +63,10 @@ function App() {
             {/* Rutas de liquidaciones */}
             <Route path="/settlements" element={<SettlementsListPage />} />
             <Route path="/settlements/:id" element={<SettlementDetailPage />} />
+            
+            {/* Rutas de certificaciones */}
+            <Route path="/certifications" element={<CertificationsListPage />} />
+            <Route path="/certifications/new" element={<NewCertificationPage />} />
             
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Route>
