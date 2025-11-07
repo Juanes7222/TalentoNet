@@ -102,7 +102,7 @@ export default function AffiliationsListPage() {
             </button>
           )}
           <Link to="/affiliations/report" className="btn btn-secondary">
-            📊 Ver Reporte
+             Ver Reporte
           </Link>
         </div>
       </div>
