@@ -123,6 +123,24 @@ export default function CandidateDetailPage() {
                 <p className="text-sm text-gray-600">Fecha de Postulación</p>
                 <p className="font-medium">{formatDate(candidate.fechaPostulacion)}</p>
               </div>
+              {candidate.ciudad && (
+                <div>
+                  <p className="text-sm text-gray-600">Ciudad</p>
+                  <p className="font-medium">{candidate.ciudad}</p>
+                </div>
+              )}
+              {candidate.departamento && (
+                <div>
+                  <p className="text-sm text-gray-600">Departamento</p>
+                  <p className="font-medium">{candidate.departamento}</p>
+                </div>
+              )}
+              {candidate.direccion && (
+                <div className="md:col-span-2">
+                  <p className="text-sm text-gray-600">Dirección</p>
+                  <p className="font-medium">{candidate.direccion}</p>
+                </div>
+              )}
             </div>
           </div>
 

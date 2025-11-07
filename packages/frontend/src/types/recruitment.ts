@@ -67,6 +67,9 @@ export interface Candidate {
   email: string;
   telefono: string;
   fechaNacimiento?: string;
+  ciudad?: string;
+  departamento?: string;
+  direccion?: string;
   experienciaAnios?: number;
   ultimoCargo?: string;
   ultimaEmpresa?: string;
@@ -134,6 +137,9 @@ export interface CreateCandidateDto {
   email: string;
   telefono: string;
   fechaNacimiento?: string;
+  ciudad?: string;
+  departamento?: string;
+  direccion?: string;
   estadoProceso?: CandidateStatus;
   notas?: string;
 }

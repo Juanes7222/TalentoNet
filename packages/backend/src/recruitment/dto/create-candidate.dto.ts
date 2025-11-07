@@ -49,6 +49,21 @@ export class CreateCandidateDto {
   @IsOptional()
   fechaNacimiento?: string;
 
+  @ApiPropertyOptional({ description: 'Ciudad de residencia', example: 'Bogotá' })
+  @IsString()
+  @IsOptional()
+  ciudad?: string;
+
+  @ApiPropertyOptional({ description: 'Departamento de residencia', example: 'Cundinamarca' })
+  @IsString()
+  @IsOptional()
+  departamento?: string;
+
+  @ApiPropertyOptional({ description: 'Dirección de residencia', example: 'Calle 123 #45-67' })
+  @IsString()
+  @IsOptional()
+  direccion?: string;
+
   @ApiPropertyOptional({
     description: 'Estado del candidato',
     enum: CandidateStatus,

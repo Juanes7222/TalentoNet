@@ -17,6 +17,9 @@ export default function CandidateFormPage() {
     email: '',
     telefono: '',
     fechaNacimiento: '',
+    ciudad: '',
+    departamento: '',
+    direccion: '',
     estadoProceso: CandidateStatus.POSTULADO,
     notas: '',
   });
@@ -28,6 +31,9 @@ export default function CandidateFormPage() {
       await createCandidate.mutateAsync({
         ...formData,
         fechaNacimiento: formData.fechaNacimiento || undefined,
+        ciudad: formData.ciudad || undefined,
+        departamento: formData.departamento || undefined,
+        direccion: formData.direccion || undefined,
         notas: formData.notas || undefined,
       });
 
@@ -146,6 +152,47 @@ export default function CandidateFormPage() {
               onChange={(e) => setFormData({ ...formData, fechaNacimiento: e.target.value })}
             />
           </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ciudad
+            </label>
+            <input
+              type="text"
+              className="input"
+              placeholder="Ej: Bogotá, Medellín, Cali..."
+              value={formData.ciudad}
+              onChange={(e) => setFormData({ ...formData, ciudad: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Departamento
+            </label>
+            <input
+              type="text"
+              className="input"
+              placeholder="Ej: Cundinamarca, Antioquia, Valle del Cauca..."
+              value={formData.departamento}
+              onChange={(e) => setFormData({ ...formData, departamento: e.target.value })}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Dirección
+          </label>
+          <input
+            type="text"
+            className="input"
+            placeholder="Calle 123 #45-67"
+            value={formData.direccion}
+            onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
+          />
         </div>
 
         <div>

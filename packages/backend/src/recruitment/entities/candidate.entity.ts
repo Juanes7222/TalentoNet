@@ -54,6 +54,16 @@ export class Candidate {
   @Column({ name: 'fecha_nacimiento', type: 'date', nullable: true })
   fechaNacimiento?: Date;
 
+  // Ubicación
+  @Column({ length: 100, nullable: true })
+  ciudad?: string;
+
+  @Column({ length: 100, nullable: true })
+  departamento?: string;
+
+  @Column({ type: 'text', nullable: true })
+  direccion?: string;
+
   // Información laboral
   @Column({ name: 'experiencia_anios', type: 'int', nullable: true })
   experienciaAnios?: number;

@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Candidate, CandidateStatus } from '../entities/candidate.entity';
 import { CandidateStateHistory } from '../entities/candidate-state-history.entity';
+import { Employee, IdentificationType } from '../../employees/employee.entity';
 import { CreateCandidateDto } from '../dto/create-candidate.dto';
 import { UpdateCandidateStatusDto } from '../dto/update-candidate-status.dto';
 import { CandidateFilterDto } from '../dto/candidate-filter.dto';
@@ -19,6 +20,8 @@ export class CandidatesService {
     private readonly candidateRepository: Repository<Candidate>,
     @InjectRepository(CandidateStateHistory)
     private readonly stateHistoryRepository: Repository<CandidateStateHistory>,
+    @InjectRepository(Employee)
+    private readonly employeeRepository: Repository<Employee>,
   ) {}
 
   async create(createCandidateDto: CreateCandidateDto): Promise<Candidate> {
@@ -94,6 +97,11 @@ export class CandidatesService {
     const oldStatus = candidate.estadoProceso;
     candidate.estadoProceso = updateStatusDto.estado;
 
+    // Si el nuevo estado es CONTRATADO, crear automáticamente un empleado
+    if (updateStatusDto.estado === CandidateStatus.CONTRATADO) {
+      await this.createEmployeeFromCandidate(candidate);
+    }
+
     // Guardar el cambio
     const updatedCandidate = await this.candidateRepository.save(candidate);
 
@@ -111,6 +119,38 @@ export class CandidatesService {
     await this.stateHistoryRepository.save(stateHistory);
 
     return updatedCandidate;
+  }
+
+  /**
+   * Crea un empleado a partir de un candidato contratado
+   */
+  private async createEmployeeFromCandidate(candidate: Candidate): Promise<Employee> {
+    // Verificar si ya existe un empleado con esta cédula
+    const existingEmployee = await this.employeeRepository.findOne({
+      where: { identificationNumber: candidate.cedula },
+    });
+
+    if (existingEmployee) {
+      // Si ya existe, no crear otro empleado
+      return existingEmployee;
+    }
+
+    // Crear el empleado con la información del candidato
+    const employee = this.employeeRepository.create({
+      identificationType: IdentificationType.CC, // Por defecto CC, se puede ajustar
+      identificationNumber: candidate.cedula,
+      firstName: candidate.nombre,
+      lastName: candidate.apellido,
+      dateOfBirth: candidate.fechaNacimiento ? new Date(candidate.fechaNacimiento) : new Date('1990-01-01'), // Fecha placeholder si no existe
+      phone: candidate.telefono,
+      address: candidate.direccion,
+      city: candidate.ciudad,
+      department: candidate.departamento,
+      hireDate: new Date(), // Fecha actual como fecha de contratación
+      country: 'Colombia',
+    });
+
+    return await this.employeeRepository.save(employee);
   }
 
   async remove(id: string): Promise<void> {

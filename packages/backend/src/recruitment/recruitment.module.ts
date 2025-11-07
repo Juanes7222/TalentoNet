@@ -8,6 +8,7 @@ import {
   Interview,
   CandidateStateHistory,
 } from './entities';
+import { Employee } from '../employees/employee.entity';
 
 // Services
 import {
@@ -30,6 +31,7 @@ import {
       Candidate,
       Interview,
       CandidateStateHistory,
+      Employee, // Agregado para crear empleados desde candidatos
     ]),
   ],
   controllers: [
