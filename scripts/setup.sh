@@ -73,7 +73,7 @@ fi
 
 # Iniciar servicios con Docker Compose
 echo -e "${YELLOW} Iniciando servicios Docker (PostgreSQL, RabbitMQ, MinIO)...${NC}"
-docker-compose -f infra/docker-compose.yml up -d postgres rabbitmq minio
+docker compose -f infra/docker-compose.yml up -d postgres rabbitmq minio
 
 echo -e "${YELLOW} Esperando a que PostgreSQL esté listo...${NC}"
 sleep 10
