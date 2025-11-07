@@ -14,6 +14,7 @@ import { QueueModule } from './queue/queue.module';
 import { DatabaseModule } from './database/database.module';
 import { RecruitmentModule } from './recruitment/recruitment.module';
 import { AffiliationsModule } from './affiliations/affiliations.module';
+import { ContractsModule } from './contracts/contracts.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { AffiliationsModule } from './affiliations/affiliations.module';
     QueueModule,
     RecruitmentModule,
     AffiliationsModule,
+    ContractsModule,
   ],
   providers: [
     {
