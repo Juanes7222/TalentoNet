@@ -1,11 +1,14 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useEmployee, useDeleteEmployee } from '../features/employees/hooks';
+import GenerateSettlementModal from './employees/components/GenerateSettlementModal';
 
 export function EmployeeDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: employee, isLoading } = useEmployee(id || '');
   const deleteEmployee = useDeleteEmployee();
+  const [showSettlementModal, setShowSettlementModal] = useState(false);
 
   const handleDelete = async () => {
     if (window.confirm('¿Está seguro de desactivar este empleado?')) {
@@ -47,6 +50,12 @@ export function EmployeeDetailPage() {
         <div className="flex gap-3">
           <Link to="/employees" className="btn btn-secondary">← Volver</Link>
           <Link to={`/employees/${id}/edit`} className="btn btn-primary">✏️ Editar</Link>
+          <button 
+            onClick={() => setShowSettlementModal(true)} 
+            className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700"
+          >
+            📋 Liquidar Contrato
+          </button>
           <button onClick={handleDelete} className="btn btn-danger">Desactivar</button>
         </div>
       </div>
@@ -161,6 +170,15 @@ export function EmployeeDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal de Generar Liquidación */}
+      {showSettlementModal && (
+        <GenerateSettlementModal
+          employeeId={id!}
+          employeeName={employee.fullName}
+          onClose={() => setShowSettlementModal(false)}
+        />
+      )}
     </div>
   );
 }

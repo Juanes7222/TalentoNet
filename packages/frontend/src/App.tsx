@@ -20,6 +20,8 @@ import AffiliationDetailPage from './pages/affiliations/AffiliationDetailPage';
 import AffiliationReportPage from './pages/affiliations/AffiliationReportPage';
 import PayrollPeriodsPage from './pages/payroll/PayrollPeriodsPage';
 import PayrollPeriodDetailPage from './pages/payroll/PayrollPeriodDetailPage';
+import SettlementsListPage from './pages/settlements/SettlementsListPage';
+import SettlementDetailPage from './pages/settlements/SettlementDetailPage';
 
 function App() {
   return (
@@ -55,6 +57,10 @@ function App() {
             {/* Rutas de nómina */}
             <Route path="/payroll" element={<PayrollPeriodsPage />} />
             <Route path="/payroll/:id" element={<PayrollPeriodDetailPage />} />
+            
+            {/* Rutas de liquidaciones */}
+            <Route path="/settlements" element={<SettlementsListPage />} />
+            <Route path="/settlements/:id" element={<SettlementDetailPage />} />
             
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Route>
