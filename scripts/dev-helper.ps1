@@ -15,16 +15,16 @@ function Show-Menu {
     
     Write-Host "Selecciona una opción:" -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "  1. 🚀 Setup inicial completo" -ForegroundColor White
-    Write-Host "  2. 🐳 Iniciar servicios Docker" -ForegroundColor White
-    Write-Host "  3. 🛑 Detener servicios Docker" -ForegroundColor White
-    Write-Host "  4. 📋 Ejecutar migraciones" -ForegroundColor White
-    Write-Host "  5. 🌱 Cargar datos de prueba" -ForegroundColor White
-    Write-Host "  6. 🔄 Resetear base de datos" -ForegroundColor White
-    Write-Host "  7. ✅ Verificar estado del sistema" -ForegroundColor White
-    Write-Host "  8. 📝 Inicializar archivos .env" -ForegroundColor White
-    Write-Host "  9. 🪣 Configurar bucket MinIO" -ForegroundColor White
-    Write-Host "  0. 🚪 Salir" -ForegroundColor White
+    Write-Host "  1.  Setup inicial completo" -ForegroundColor White
+    Write-Host "  2.  Iniciar servicios Docker" -ForegroundColor White
+    Write-Host "  3.  Detener servicios Docker" -ForegroundColor White
+    Write-Host "  4.  Ejecutar migraciones" -ForegroundColor White
+    Write-Host "  5.  Cargar datos de prueba" -ForegroundColor White
+    Write-Host "  6.  Resetear base de datos" -ForegroundColor White
+    Write-Host "  7.  Verificar estado del sistema" -ForegroundColor White
+    Write-Host "  8.  Inicializar archivos .env" -ForegroundColor White
+    Write-Host "  9.  Configurar bucket MinIO" -ForegroundColor White
+    Write-Host "  0.  Salir" -ForegroundColor White
     Write-Host ""
 }
 

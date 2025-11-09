@@ -2,21 +2,35 @@
 # Módulo de utilidades para base de datos PostgreSQL
 # Funciones reutilizables para migraciones, seeds y gestión de BD
 
-# Importar módulo de output
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/output-utils.sh"
+# Importar módulo de output (asumiendo que está en el mismo directorio modules/)
+MODULE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$MODULE_DIR/output-utils.sh"
 
 # Configuración de conexión PostgreSQL
-readonly DB_HOST="${DB_HOST:-localhost}"
-readonly DB_PORT="${DB_PORT:-5432}"
-readonly DB_NAME="${DB_NAME:-talentonet}"
-readonly DB_USER="${DB_USER:-talentonet_user}"
-readonly DB_PASSWORD="${DB_PASSWORD:-talentonet_pass}"
+if [ -z "$DB_HOST" ]; then
+    readonly DB_HOST="${DB_HOST:-localhost}"
+    readonly DB_PORT="${DB_PORT:-5432}"
+    readonly DB_NAME="${DB_NAME:-talentonet_db}"
+    readonly DB_USER="${DB_USER:-talentonet}"
+    readonly DB_PASSWORD="${DB_PASSWORD:-talentonet_secret}"
+fi
 
 # test_postgres_connection - Verifica la conexión a PostgreSQL
 test_postgres_connection() {
-    PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c '\q' &> /dev/null
-    return $?
+    # Intentar primero con psql si está disponible
+    if command -v psql &> /dev/null; then
+        PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c '\q' &> /dev/null
+        return $?
+    fi
+    
+    # Si psql no está disponible, usar docker exec (útil en Windows/Git Bash)
+    if command -v docker &> /dev/null; then
+        docker exec talentonet-postgres pg_isready -U "$DB_USER" -d "$DB_NAME" &> /dev/null
+        return $?
+    fi
+    
+    # Si ninguno está disponible, asumir que no está conectado
+    return 1
 }
 
 # wait_for_postgres - Espera a que PostgreSQL esté listo
@@ -43,8 +57,14 @@ wait_for_postgres() {
 drop_database() {
     write_step "🗑️  Eliminando base de datos..."
     
-    PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "postgres" \
-        -c "DROP DATABASE IF EXISTS $DB_NAME;" &> /dev/null
+    if command -v psql &> /dev/null; then
+        PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "postgres" \
+            -c "DROP DATABASE IF EXISTS $DB_NAME;" &> /dev/null
+    else
+        # Usar docker exec como alternativa
+        docker exec talentonet-postgres psql -U "$DB_USER" -d "postgres" \
+            -c "DROP DATABASE IF EXISTS $DB_NAME;" &> /dev/null
+    fi
     
     if [ $? -eq 0 ]; then
         write_success "Base de datos eliminada"
@@ -59,8 +79,14 @@ drop_database() {
 create_database() {
     write_step "📊 Creando base de datos..."
     
-    PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "postgres" \
-        -c "CREATE DATABASE $DB_NAME;" &> /dev/null
+    if command -v psql &> /dev/null; then
+        PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "postgres" \
+            -c "CREATE DATABASE $DB_NAME;" &> /dev/null
+    else
+        # Usar docker exec como alternativa
+        docker exec talentonet-postgres psql -U "$DB_USER" -d "postgres" \
+            -c "CREATE DATABASE $DB_NAME;" &> /dev/null
+    fi
     
     if [ $? -eq 0 ]; then
         write_success "Base de datos creada"
@@ -75,6 +101,7 @@ create_database() {
 invoke_sql_file() {
     local sql_file="$1"
     local file_name=$(basename "$sql_file")
+    local verbose="${2:-false}"
     
     if [ ! -f "$sql_file" ]; then
         write_error "Archivo no encontrado: $sql_file"
@@ -83,21 +110,38 @@ invoke_sql_file() {
     
     echo "  📄 Ejecutando: $file_name"
     
-    PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" \
-        -f "$sql_file" &> /dev/null
+    local result
+    local error_output
     
-    if [ $? -eq 0 ]; then
+    if command -v psql &> /dev/null; then
+        error_output=$(PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" \
+            -f "$sql_file" 2>&1)
+        result=$?
+    else
+        # Usar docker exec: copiar archivo al contenedor, ejecutar, limpiar
+        docker cp "$sql_file" talentonet-postgres:/tmp/temp.sql &> /dev/null
+        error_output=$(docker exec talentonet-postgres psql -U "$DB_USER" -d "$DB_NAME" \
+            -f /tmp/temp.sql 2>&1)
+        result=$?
+        docker exec talentonet-postgres rm /tmp/temp.sql &> /dev/null
+    fi
+    
+    if [ $result -eq 0 ]; then
         write_success "$file_name ejecutado"
         return 0
     else
         write_error "Error en $file_name"
+        if [ "$verbose" = true ]; then
+            echo -e "${COLOR_YELLOW}Primeras líneas del error:${COLOR_RESET}"
+            echo "$error_output" | grep -i "error" | head -5
+        fi
         return 1
     fi
 }
 
 # get_seed_files - Obtiene lista de archivos seed ordenados
 get_seed_files() {
-    local project_root="$(cd "$SCRIPT_DIR/../.." && pwd)"
+    local project_root="$(cd "$MODULE_DIR/../.." && pwd)"
     local seeds_path="$project_root/packages/backend/seeds"
     
     if [ ! -d "$seeds_path" ]; then
@@ -113,7 +157,7 @@ get_seed_files() {
 invoke_migrations() {
     local verbose="${1:-false}"
     
-    local project_root="$(cd "$SCRIPT_DIR/../.." && pwd)"
+    local project_root="$(cd "$MODULE_DIR/../.." && pwd)"
     local migrations_path="$project_root/packages/backend/migrations"
     
     if [ "$verbose" = true ]; then

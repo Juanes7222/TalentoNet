@@ -2,16 +2,16 @@
 # Módulo de utilidades para variables de entorno
 # Funciones reutilizables para gestionar archivos .env
 
-# Importar módulo de output
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/output-utils.sh"
+# Importar módulo de output (asumiendo que está en el mismo directorio modules/)
+MODULE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$MODULE_DIR/output-utils.sh"
 
 # initialize_env_file - Inicializa un archivo .env desde .env.example
 initialize_env_file() {
     local package_path="$1"
     local package_name="$2"
     
-    local project_root="$(cd "$SCRIPT_DIR/../.." && pwd)"
+    local project_root="$(cd "$MODULE_DIR/../.." && pwd)"
     local example_path="$project_root/$package_path/.env.example"
     local env_path="$project_root/$package_path/.env"
     
@@ -48,7 +48,7 @@ initialize_all_env_files() {
     fi
     
     # Frontend
-    if [ -f "$(cd "$SCRIPT_DIR/../.." && pwd)/packages/frontend/.env.example" ]; then
+    if [ -f "$(cd "$MODULE_DIR/../.." && pwd)/packages/frontend/.env.example" ]; then
         if initialize_env_file "packages/frontend" "frontend"; then
             ((success++))
         fi

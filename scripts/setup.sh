@@ -43,7 +43,15 @@ fi
 
 # Ejecutar setup de base de datos (migraciones + seeds)
 if ! invoke_database_setup true; then
-    write_warning "Hubo problemas en el setup de la base de datos"
+    # Verificar si hay tablas en la base de datos
+    table_count=$(docker exec talentonet-postgres psql -U talentonet -d talentonet_db -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public';" 2>/dev/null | tr -d ' ')
+    
+    if [ ! -z "$table_count" ] && [ "$table_count" -gt 0 ]; then
+        write_warning "La base de datos ya está configurada con $table_count tablas"
+        write_info "Si necesitas reiniciar la BD, ejecuta: bash ./scripts/reset-db.sh"
+    else
+        write_warning "Hubo problemas en el setup de la base de datos"
+    fi
 fi
 
 # Configurar MinIO

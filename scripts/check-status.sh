@@ -4,8 +4,11 @@
 # Obtener directorio del script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Importar módulos
+# Importar módulos necesarios
 source "$SCRIPT_DIR/modules/output-utils.sh"
+source "$SCRIPT_DIR/modules/docker-utils.sh"
+source "$SCRIPT_DIR/modules/db-utils.sh"
+source "$SCRIPT_DIR/modules/minio-utils.sh"
 source "$SCRIPT_DIR/modules/workflow-utils.sh"
 
 write_header "Estado del Sistema TalentoNet" "$COLOR_CYAN"

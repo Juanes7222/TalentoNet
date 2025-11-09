@@ -2,13 +2,13 @@
 # Módulo de utilidades de workflow de alto nivel
 # Funciones que combinan múltiples operaciones para flujos comunes
 
-# Importar todos los módulos necesarios
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/output-utils.sh"
-source "$SCRIPT_DIR/docker-utils.sh"
-source "$SCRIPT_DIR/node-utils.sh"
-source "$SCRIPT_DIR/db-utils.sh"
-source "$SCRIPT_DIR/minio-utils.sh"
+# Importar todos los módulos necesarios (asumiendo que están en el mismo directorio modules/)
+MODULE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$MODULE_DIR/output-utils.sh"
+source "$MODULE_DIR/docker-utils.sh"
+source "$MODULE_DIR/node-utils.sh"
+source "$MODULE_DIR/db-utils.sh"
+source "$MODULE_DIR/minio-utils.sh"
 
 # invoke_prerequisites_check - Verifica todos los prerequisitos
 invoke_prerequisites_check() {

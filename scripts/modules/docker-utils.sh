@@ -2,9 +2,9 @@
 # Módulo de utilidades para Docker
 # Funciones reutilizables para verificar y gestionar Docker
 
-# Importar módulo de output
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/output-utils.sh"
+# Importar módulo de output (asumiendo que está en el mismo directorio modules/)
+MODULE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$MODULE_DIR/output-utils.sh"
 
 # test_docker_installed - Verifica si Docker está instalado
 test_docker_installed() {
@@ -61,8 +61,8 @@ test_container_running() {
 start_docker_services() {
     local services=("$@")
     
-    # Obtener ruta raíz del proyecto
-    local project_root="$(cd "$SCRIPT_DIR/../.." && pwd)"
+    # Obtener ruta raíz del proyecto (modules/ está en scripts/modules/)
+    local project_root="$(cd "$MODULE_DIR/../.." && pwd)"
     local compose_file="$project_root/infra/docker-compose.yml"
     
     write_step "🐳 Iniciando servicios Docker..."

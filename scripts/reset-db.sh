@@ -4,8 +4,9 @@
 # Obtener directorio del script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Importar módulos
+# Importar módulos necesarios
 source "$SCRIPT_DIR/modules/output-utils.sh"
+source "$SCRIPT_DIR/modules/db-utils.sh"
 source "$SCRIPT_DIR/modules/workflow-utils.sh"
 
 # Ejecutar reset completo

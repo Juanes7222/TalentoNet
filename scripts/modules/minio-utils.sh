@@ -2,14 +2,16 @@
 # Módulo de utilidades para MinIO
 # Funciones reutilizables para configurar MinIO
 
-# Importar módulo de output
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/output-utils.sh"
+# Importar módulo de output (asumiendo que está en el mismo directorio modules/)
+MODULE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$MODULE_DIR/output-utils.sh"
 
 # Configuración MinIO
-readonly MINIO_HOST="${MINIO_HOST:-localhost:9000}"
-readonly MINIO_ACCESS_KEY="${MINIO_ACCESS_KEY:-minioadmin}"
-readonly MINIO_SECRET_KEY="${MINIO_SECRET_KEY:-minioadmin}"
+if [ -z "$MINIO_HOST" ]; then
+    readonly MINIO_HOST="${MINIO_HOST:-localhost:9000}"
+    readonly MINIO_ACCESS_KEY="${MINIO_ACCESS_KEY:-minioadmin}"
+    readonly MINIO_SECRET_KEY="${MINIO_SECRET_KEY:-minioadmin}"
+fi
 
 # test_minio_running - Verifica si MinIO está corriendo
 test_minio_running() {
