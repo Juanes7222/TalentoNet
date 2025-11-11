@@ -112,7 +112,7 @@ function Invoke-CargarSeeds {
     
     Write-Info "Se encontraron $($seedFiles.Count) archivos de seed"
     
-    $result = Invoke-Seeds -SeedFiles $seedFiles -Verbose $true
+    $result = Invoke-Seeds -SeedFiles $seedFiles -ShowDetails $true
     
     Write-Summary -Title "Resultado de seeds" -Items @{
         "Total" = "$($result.Total)"

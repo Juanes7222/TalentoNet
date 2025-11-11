@@ -53,7 +53,7 @@ function Invoke-DatabaseSetup {
         }
         
         if ($seedFiles.Count -gt 0) {
-            $seedResult = Invoke-Seeds -SeedFiles $seedFiles -Verbose $Verbose
+            $seedResult = Invoke-Seeds -SeedFiles $seedFiles -ShowDetails $Verbose
         } elseif ($Verbose) {
             Write-Host "⚠️  No se encontraron archivos de seed" -ForegroundColor Yellow
         }

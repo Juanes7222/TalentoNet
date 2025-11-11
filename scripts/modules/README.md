@@ -51,19 +51,19 @@ $result = Invoke-Migrations -MigrationsPath "packages\backend\migrations" -Verbo
 
 # Obtener seeds automáticamente (RECOMENDADO)
 $seedFiles = Get-SeedFiles -SeedsPath "packages\backend\seeds"
-$seedResult = Invoke-Seeds -SeedFiles $seedFiles -Verbose $true
+$seedResult = Invoke-Seeds -SeedFiles $seedFiles -ShowDetails $true
 
 # O especificar seeds manualmente
 $seedFiles = @(
     "packages\backend\seeds\001_seed_employees.sql",
     "packages\backend\seeds\002_recruitment_data.sql"
 )
-$seedResult = Invoke-Seeds -SeedFiles $seedFiles -Verbose $true
+$seedResult = Invoke-Seeds -SeedFiles $seedFiles -ShowDetails $true
 
 # Filtrar seeds específicos
 $allSeeds = Get-SeedFiles -SeedsPath "packages\backend\seeds"
 $onlyEmployees = $allSeeds | Where-Object { $_ -like "*employee*" }
-Invoke-Seeds -SeedFiles $onlyEmployees -Verbose $true
+Invoke-Seeds -SeedFiles $onlyEmployees -ShowDetails $true
 
 # Resetear base de datos
 Reset-Database -Verbose $true
