@@ -17,8 +17,10 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
     valor: '',
     cantidad: '1',
     descripcion: '',
+    fecha: new Date().toISOString().split('T')[0],
   });
   const [loading, setLoading] = useState(false);
+  const [loadingEmployees, setLoadingEmployees] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -27,10 +29,26 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
 
   const loadEmployees = async () => {
     try {
+      setLoadingEmployees(true);
+      
+      // Usar el servicio que ya existe
       const data = await getEmployees();
-      setEmployees(data.filter((emp: Employee) => emp.status === 'active'));
+      console.log('Empleados recibidos:', data); // Para debugging
+      
+      // Si data es un objeto con propiedad 'data', extraerla
+      const employeesArray = Array.isArray(data) ? data : (data as any).data || [];
+      
+      // Filtrar solo empleados activos
+      const activeEmployees = employeesArray.filter((emp: Employee) => emp.status === 'active');
+      
+      console.log('Empleados activos:', activeEmployees); // Para debugging
+      setEmployees(activeEmployees);
+      
     } catch (error) {
       console.error('Error cargando empleados:', error);
+      alert('Error al cargar la lista de empleados. Por favor, intenta de nuevo.');
+    } finally {
+      setLoadingEmployees(false);
     }
   };
 
@@ -59,7 +77,8 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
         categoria: formData.categoria,
         valor: Number(formData.valor),
         cantidad: Number(formData.cantidad),
-        descripcion: formData.descripcion || undefined,
+        fecha: new Date(formData.fecha).toISOString(),
+        comentario: formData.descripcion || undefined,
       });
       onSuccess();
     } catch (error: any) {
@@ -111,9 +130,12 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
                     id="employeeId"
                     value={formData.employeeId}
                     onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
-                    className={`mt-1 block w-full border ${errors.employeeId ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                    disabled={loadingEmployees}
+                    className={`mt-1 block w-full border ${errors.employeeId ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100`}
                   >
-                    <option value="">Seleccionar empleado</option>
+                    <option value="">
+                      {loadingEmployees ? 'Cargando empleados...' : 'Seleccionar empleado'}
+                    </option>
                     {employees.map((emp) => (
                       <option key={emp.id} value={emp.id}>
                         {emp.firstName} {emp.lastName} - {emp.documentNumber}
@@ -121,6 +143,9 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
                     ))}
                   </select>
                   {errors.employeeId && <p className="mt-1 text-sm text-red-600">{errors.employeeId}</p>}
+                  {!loadingEmployees && employees.length === 0 && (
+                    <p className="mt-1 text-sm text-amber-600">No hay empleados activos disponibles</p>
+                  )}
                 </div>
 
                 {/* Categoría */}
@@ -233,7 +258,7 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
             <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || loadingEmployees}
                 className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
               >
                 {loading ? 'Guardando...' : 'Guardar'}

@@ -275,3 +275,80 @@ export function getEstadoLabel(estado: PayrollPeriod['estado']): string {
       return estado;
   }
 }
+
+
+// services/payroll.service.ts - Agrega estas funciones
+
+export interface PayrollTrendData {
+  date: string;
+  total: number;
+  abiertos: number;
+  liquidados: number;
+  aprobados: number;
+  cerrados: number;
+}
+
+export const getPayrollTrendData = async (days: number = 30): Promise<PayrollTrendData[]> => {
+  // En una implementación real, esto vendría de tu API
+  // Por ahora simulamos datos basados en el tiempo
+  
+  const trendData: PayrollTrendData[] = [];
+  const today = new Date();
+  
+  for (let i = days; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(today.getDate() - i);
+    
+    // Simular crecimiento orgánico basado en el tiempo
+    const baseValue = Math.max(1, Math.floor((days - i) / 7) + 1);
+    
+    trendData.push({
+      date: date.toISOString().split('T')[0],
+      total: baseValue * 5,
+      abiertos: Math.floor(baseValue * 1.2),
+      liquidados: Math.floor(baseValue * 1.1),
+      aprobados: Math.floor(baseValue * 0.8),
+      cerrados: Math.floor(baseValue * 0.9),
+    });
+  }
+  
+  return trendData;
+};
+
+export const getRealTimeStats = async () => {
+  const periods = await getPayrollPeriods();
+  
+  // Obtener estadísticas reales
+  const realStats = {
+    total: periods.length,
+    abiertos: periods.filter(p => p.estado === 'abierto').length,
+    liquidados: periods.filter(p => p.estado === 'liquidado').length,
+    aprobados: periods.filter(p => p.estado === 'aprobado').length,
+    cerrados: periods.filter(p => p.estado === 'cerrado').length,
+  };
+
+  // Generar datos de tendencia REALISTAS basados en los períodos existentes
+  const trendData = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - i));
+    
+    // Para cada día, calcular cuántos períodos existían hasta esa fecha
+    const periodsUntilDate = periods.filter(period => 
+      new Date(period.createdAt) <= date
+    );
+
+    return {
+      date: date.toISOString().split('T')[0],
+      total: periodsUntilDate.length,
+      abiertos: periodsUntilDate.filter(p => p.estado === 'abierto').length,
+      liquidados: periodsUntilDate.filter(p => p.estado === 'liquidado').length,
+      aprobados: periodsUntilDate.filter(p => p.estado === 'aprobado').length,
+      cerrados: periodsUntilDate.filter(p => p.estado === 'cerrado').length,
+    };
+  });
+
+  return {
+    stats: realStats,
+    trendData
+  };
+};
