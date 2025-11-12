@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EmployeesService } from './employees.service';
 import { Employee, EmployeeStatus, IdentificationType, Gender } from './employee.entity';
+import { Contract } from '../payroll/contract.entity';
 import { UsersService } from '../users/users.service';
 import { QueueService } from '../queue/queue.service';
 import { NotFoundException, ConflictException } from '@nestjs/common';
@@ -10,6 +11,7 @@ import { NotFoundException, ConflictException } from '@nestjs/common';
 describe('EmployeesService', () => {
   let service: EmployeesService;
   let repository: Repository<Employee>;
+  let contractRepository: Repository<Contract>;
   let usersService: UsersService;
   let queueService: QueueService;
 
@@ -41,6 +43,18 @@ describe('EmployeesService', () => {
     age: 34,
   };
 
+  const mockContract = {
+    id: 'contract-id-123',
+    employeeId: mockEmployee.id,
+    contractType: 'indefinido',
+    position: 'Desarrollador Senior',
+    department: 'Tecnología',
+    salary: 5000000,
+    startDate: new Date('2024-01-01'),
+    endDate: undefined,
+    isCurrent: true,
+  };
+
   const mockRepository = {
     create: jest.fn(),
     save: jest.fn(),
@@ -48,6 +62,12 @@ describe('EmployeesService', () => {
     findOne: jest.fn(),
     findAndCount: jest.fn(),
     count: jest.fn(),
+  };
+
+  const mockContractRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+    findOne: jest.fn(),
   };
 
   const mockUsersService = {
@@ -67,6 +87,10 @@ describe('EmployeesService', () => {
           useValue: mockRepository,
         },
         {
+          provide: getRepositoryToken(Contract),
+          useValue: mockContractRepository,
+        },
+        {
           provide: UsersService,
           useValue: mockUsersService,
         },
@@ -79,6 +103,7 @@ describe('EmployeesService', () => {
 
     service = module.get<EmployeesService>(EmployeesService);
     repository = module.get<Repository<Employee>>(getRepositoryToken(Employee));
+    contractRepository = module.get<Repository<Contract>>(getRepositoryToken(Contract));
     usersService = module.get<UsersService>(UsersService);
     queueService = module.get<QueueService>(QueueService);
 
@@ -101,12 +126,21 @@ describe('EmployeesService', () => {
       city: 'Bogotá',
       department: 'Cundinamarca',
       hireDate: '2024-01-01',
+      contract: {
+        contractType: 'indefinido',
+        position: 'Desarrollador Senior',
+        department: 'Tecnología',
+        salary: 5000000,
+        startDate: '2024-01-01',
+      },
     };
 
     it('debe crear un empleado exitosamente', async () => {
       mockRepository.findOne.mockResolvedValue(null);
       mockRepository.create.mockReturnValue(mockEmployee);
       mockRepository.save.mockResolvedValue(mockEmployee);
+      mockContractRepository.create.mockReturnValue(mockContract);
+      mockContractRepository.save.mockResolvedValue(mockContract);
       mockQueueService.publishToQueue.mockResolvedValue(undefined);
 
       const result = await service.create(createDto);
@@ -115,8 +149,9 @@ describe('EmployeesService', () => {
       expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { identificationNumber: createDto.identificationNumber },
       });
-      expect(mockRepository.create).toHaveBeenCalledWith(expect.objectContaining(createDto));
       expect(mockRepository.save).toHaveBeenCalled();
+      expect(mockContractRepository.create).toHaveBeenCalled();
+      expect(mockContractRepository.save).toHaveBeenCalled();
       expect(mockQueueService.publishToQueue).toHaveBeenCalledWith(
         'notifications',
         expect.objectContaining({ type: 'employee.created' }),

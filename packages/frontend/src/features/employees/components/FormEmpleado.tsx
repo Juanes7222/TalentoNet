@@ -1,13 +1,13 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
-import { employeeSchema, type EmployeeFormData } from '../types';
+import { employeeSchema, employeeUpdateSchema, type EmployeeFormData, type EmployeeUpdateFormData } from '../types';
 import { useCreateEmployee, useUpdateEmployee } from '../hooks';
 
 interface FormEmpleadoProps {
   employeeId?: string;
-  initialData?: Partial<EmployeeFormData>;
   onShowNotification?: (type: 'success' | 'error', title: string, message: string) => void;
+  initialData?: Partial<EmployeeFormData> | Partial<EmployeeUpdateFormData>;
 }
 
 export default function FormEmpleado({ 
@@ -24,8 +24,8 @@ export default function FormEmpleado({
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<EmployeeFormData>({
-    resolver: zodResolver(employeeSchema),
+  } = useForm<EmployeeFormData | EmployeeUpdateFormData>({
+    resolver: zodResolver(isEditing ? employeeUpdateSchema : employeeSchema),
     defaultValues: initialData,
   });
 
@@ -33,13 +33,24 @@ export default function FormEmpleado({
     onShowNotification?.(type, title, message);
   };
 
-  const onSubmit = async (data: EmployeeFormData) => {
+  const onSubmit = async (data: EmployeeFormData | EmployeeUpdateFormData) => {
     try {
+      // Limpiar datos antes de enviar
+      const cleanData = { ...data };
+      
+      // Si es creación y tiene contrato
+      if (!isEditing && 'contract' in cleanData && cleanData.contract) {
+        // Si endDate está vacío, eliminarlo del objeto
+        if (!cleanData.contract.endDate || cleanData.contract.endDate === '') {
+          delete cleanData.contract.endDate;
+        }
+      }
+      
       if (isEditing) {
-        await updateEmployee.mutateAsync({ id: employeeId!, data });
+        await updateEmployee.mutateAsync({ id: employeeId!, data: cleanData as EmployeeUpdateFormData });
         showNotification('success', '¡Éxito!', 'Empleado actualizado exitosamente');
       } else {
-        await createEmployee.mutateAsync(data);
+        await createEmployee.mutateAsync(cleanData as EmployeeFormData);
         showNotification('success', '¡Éxito!', 'Empleado creado exitosamente');
       }
 
@@ -320,8 +331,159 @@ export default function FormEmpleado({
             </div>
           </div>
 
-      {/* Botones */}
-      <div className="flex justify-end gap-4 mt-8">
+      {/* Sección de Contrato (solo al crear) */}
+      {!isEditing && (
+        <div className="space-y-8">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/50">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Información del Contrato
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Tipo de Contrato *
+              </label>
+              <select 
+                {...register('contract.contractType')}
+                className={`w-full px-4 py-3 bg-slate-800/50 border rounded-xl text-slate-200 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/50 transition-all ${
+                  (errors as any).contract?.contractType ? 'border-red-500/50 ring-2 ring-red-500/50' : 'border-slate-600/50'
+                }`}
+              >
+                <option value="">Seleccione...</option>
+                <option value="indefinido">Indefinido</option>
+                <option value="fijo">Fijo</option>
+                <option value="obra_labor">Obra o Labor</option>
+                <option value="prestacion_servicios">Prestación de Servicios</option>
+              </select>
+              {(errors as any).contract?.contractType && (
+                <p className="mt-2 text-sm text-red-400 flex items-center space-x-1">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  <span>{(errors as any).contract.contractType.message}</span>
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Cargo *</label>
+              <input 
+                type="text" 
+                {...register('contract.position')}
+                placeholder="Ej: Desarrollador Senior"
+                className={`w-full px-4 py-3 bg-slate-800/50 border rounded-xl text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/50 transition-all ${
+                  (errors as any).contract?.position ? 'border-red-500/50 ring-2 ring-red-500/50' : 'border-slate-600/50'
+                }`}
+              />
+              {(errors as any).contract?.position && (
+                <p className="mt-2 text-sm text-red-400 flex items-center space-x-1">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  <span>{(errors as any).contract.position.message}</span>
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Departamento *</label>
+              <input 
+                type="text" 
+                {...register('contract.department')}
+                placeholder="Ej: Tecnología"
+                className={`w-full px-4 py-3 bg-slate-800/50 border rounded-xl text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/50 transition-all ${
+                  (errors as any).contract?.department ? 'border-red-500/50 ring-2 ring-red-500/50' : 'border-slate-600/50'
+                }`}
+              />
+              {(errors as any).contract?.department && (
+                <p className="mt-2 text-sm text-red-400 flex items-center space-x-1">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  <span>{(errors as any).contract.department.message}</span>
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Salario *</label>
+              <input 
+                type="number" 
+                {...register('contract.salary', { valueAsNumber: true })}
+                placeholder="Ej: 5000000"
+                className={`w-full px-4 py-3 bg-slate-800/50 border rounded-xl text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/50 transition-all ${
+                  (errors as any).contract?.salary ? 'border-red-500/50 ring-2 ring-red-500/50' : 'border-slate-600/50'
+                }`}
+                step="1000"
+                min="0"
+              />
+              {(errors as any).contract?.salary && (
+                <p className="mt-2 text-sm text-red-400 flex items-center space-x-1">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  <span>{(errors as any).contract.salary.message}</span>
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Fecha de Inicio del Contrato *
+              </label>
+              <input 
+                type="date" 
+                {...register('contract.startDate')}
+                className={`w-full px-4 py-3 bg-slate-800/50 border rounded-xl text-slate-200 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/50 transition-all ${
+                  (errors as any).contract?.startDate ? 'border-red-500/50 ring-2 ring-red-500/50' : 'border-slate-600/50'
+                }`}
+              />
+              {(errors as any).contract?.startDate && (
+                <p className="mt-2 text-sm text-red-400 flex items-center space-x-1">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  <span>{(errors as any).contract.startDate.message}</span>
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Fecha de Fin (opcional)
+              </label>
+              <input 
+                type="date" 
+                {...register('contract.endDate')}
+                className={`w-full px-4 py-3 bg-slate-800/50 border rounded-xl text-slate-200 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/50 transition-all ${
+                  (errors as any).contract?.endDate ? 'border-red-500/50 ring-2 ring-red-500/50' : 'border-slate-600/50'
+                }`}
+              />
+              {(errors as any).contract?.endDate && (
+                <p className="mt-2 text-sm text-red-400 flex items-center space-x-1">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  <span>{(errors as any).contract.endDate.message}</span>
+                </p>
+              )}
+              <p className="mt-1 text-xs text-slate-400">
+                Solo para contratos con duración definida (fijos)
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Botones de acción */}
+      <div className="flex justify-end gap-4 pt-6">
         <button
           type="button"
           onClick={handleCancel}
