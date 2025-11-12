@@ -10,6 +10,9 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  Logger,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { EmployeesService } from './employees.service';
@@ -23,6 +26,8 @@ import { Roles } from '../auth/decorators/roles.decorator';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('employees')
 export class EmployeesController {
+  private readonly logger = new Logger(EmployeesController.name);
+
   constructor(private readonly employeesService: EmployeesService) {}
 
   @Post()
@@ -32,6 +37,7 @@ export class EmployeesController {
   @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
   @ApiResponse({ status: 409, description: 'El empleado ya existe' })
   async create(@Body() createEmployeeDto: CreateEmployeeDto) {
+    this.logger.log(`Creando empleado: ${JSON.stringify(createEmployeeDto, null, 2)}`);
     return this.employeesService.create(createEmployeeDto);
   }
 
@@ -46,6 +52,7 @@ export class EmployeesController {
   @ApiQuery({ name: 'page', required: false, description: 'Número de página', example: 1 })
   @ApiQuery({ name: 'limit', required: false, description: 'Registros por página', example: 10 })
   async findAll(@Query() filters: EmployeeFilterDto) {
+    this.logger.log(`Consultando empleados con filtros: ${JSON.stringify(filters)}`);
     return this.employeesService.findAll(filters);
   }
 
