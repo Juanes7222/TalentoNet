@@ -3,18 +3,22 @@ import {
   NotFoundException,
   ConflictException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Candidate, CandidateStatus } from '../entities/candidate.entity';
 import { CandidateStateHistory } from '../entities/candidate-state-history.entity';
 import { Employee, IdentificationType } from '../../employees/employee.entity';
+import { Contract } from '../../payroll/contract.entity';
 import { CreateCandidateDto } from '../dto/create-candidate.dto';
 import { UpdateCandidateStatusDto } from '../dto/update-candidate-status.dto';
 import { CandidateFilterDto } from '../dto/candidate-filter.dto';
 
 @Injectable()
 export class CandidatesService {
+  private readonly logger = new Logger(CandidatesService.name);
+
   constructor(
     @InjectRepository(Candidate)
     private readonly candidateRepository: Repository<Candidate>,
@@ -22,6 +26,8 @@ export class CandidatesService {
     private readonly stateHistoryRepository: Repository<CandidateStateHistory>,
     @InjectRepository(Employee)
     private readonly employeeRepository: Repository<Employee>,
+    @InjectRepository(Contract)
+    private readonly contractRepository: Repository<Contract>,
   ) {}
 
   async create(createCandidateDto: CreateCandidateDto): Promise<Candidate> {
@@ -122,35 +128,84 @@ export class CandidatesService {
   }
 
   /**
-   * Crea un empleado a partir de un candidato contratado
+   * Crea un empleado y su contrato a partir de un candidato contratado
    */
   private async createEmployeeFromCandidate(candidate: Candidate): Promise<Employee> {
+    // Cargar la vacante para obtener información del contrato
+    const candidateWithVacancy = await this.candidateRepository.findOne({
+      where: { id: candidate.id },
+      relations: ['vacancy'],
+    });
+
+    if (!candidateWithVacancy?.vacancy) {
+      throw new BadRequestException(
+        'No se puede contratar: No se encontró información de la vacante',
+      );
+    }
+
+    const vacancy = candidateWithVacancy.vacancy;
+
     // Verificar si ya existe un empleado con esta cédula
-    const existingEmployee = await this.employeeRepository.findOne({
+    let employee = await this.employeeRepository.findOne({
       where: { identificationNumber: candidate.cedula },
     });
 
-    if (existingEmployee) {
-      // Si ya existe, no crear otro empleado
-      return existingEmployee;
+    if (employee) {
+      this.logger.log(`Empleado con cédula ${candidate.cedula} ya existe. ID: ${employee.id}`);
+    } else {
+      // Crear el empleado con la información del candidato
+      employee = this.employeeRepository.create({
+        identificationType: IdentificationType.CC, // Por defecto CC, se puede ajustar
+        identificationNumber: candidate.cedula,
+        firstName: candidate.nombre,
+        lastName: candidate.apellido,
+        dateOfBirth: candidate.fechaNacimiento
+          ? new Date(candidate.fechaNacimiento)
+          : new Date('1990-01-01'), // Fecha placeholder si no existe
+        phone: candidate.telefono,
+        address: candidate.direccion,
+        city: candidate.ciudad,
+        department: candidate.departamento,
+        hireDate: new Date(), // Fecha actual como fecha de contratación
+        country: 'Colombia',
+      });
+
+      employee = await this.employeeRepository.save(employee);
+      this.logger.log(`Empleado creado exitosamente. ID: ${employee.id}`);
     }
 
-    // Crear el empleado con la información del candidato
-    const employee = this.employeeRepository.create({
-      identificationType: IdentificationType.CC, // Por defecto CC, se puede ajustar
-      identificationNumber: candidate.cedula,
-      firstName: candidate.nombre,
-      lastName: candidate.apellido,
-      dateOfBirth: candidate.fechaNacimiento ? new Date(candidate.fechaNacimiento) : new Date('1990-01-01'), // Fecha placeholder si no existe
-      phone: candidate.telefono,
-      address: candidate.direccion,
-      city: candidate.ciudad,
-      department: candidate.departamento,
-      hireDate: new Date(), // Fecha actual como fecha de contratación
-      country: 'Colombia',
+    // Verificar si ya tiene un contrato activo
+    const existingContract = await this.contractRepository.findOne({
+      where: { employeeId: employee.id, isCurrent: true },
     });
 
-    return await this.employeeRepository.save(employee);
+    if (existingContract) {
+      this.logger.warn(
+        `El empleado ${employee.id} ya tiene un contrato activo. No se creará uno nuevo.`,
+      );
+      return employee;
+    }
+
+    // Crear el contrato basado en la información de la vacante
+    // Si la vacante tiene rango salarial, usar el promedio o el mínimo
+    const salarioContrato = vacancy.salarioMin || 1300000; // Salario mínimo por defecto
+
+    const contract = this.contractRepository.create({
+      employeeId: employee.id,
+      contractType: 'indefinido', // Por defecto indefinido, puede ajustarse manualmente después
+      position: vacancy.cargo,
+      department: vacancy.departamento,
+      salary: salarioContrato,
+      startDate: new Date(), // Fecha actual como inicio del contrato
+      isCurrent: true,
+    });
+
+    await this.contractRepository.save(contract);
+    this.logger.log(
+      `Contrato creado exitosamente para empleado ${employee.id}. Cargo: ${vacancy.cargo}, Salario: ${salarioContrato}`,
+    );
+
+    return employee;
   }
 
   async remove(id: string): Promise<void> {
