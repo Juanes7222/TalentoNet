@@ -235,7 +235,7 @@ export class PayrollService {
         } else {
           entry = this.entryRepository.create({
             ...calculation,
-            payrollPeriodId: periodId,
+            payrollPeriodId: periodId,  // Establecer DESPUÉS del spread para no ser sobrescrito
             calculatedBy: userId,
             calculatedAt: new Date(),
           });
@@ -248,11 +248,14 @@ export class PayrollService {
       }
     }
 
-    // Actualizar estado del período
-    period.estado = 'liquidado';
-    period.liquidatedBy = userId;
-    period.liquidatedAt = new Date();
-    await this.periodRepository.save(period);
+    // Actualizar estado del período directamente sin cargar relaciones
+    // Usamos update() en lugar de save() para evitar que TypeORM modifique 
+    // automáticamente las relaciones inversas (entries) que ya hemos guardado
+    await this.periodRepository.update(periodId, {
+      estado: 'liquidado',
+      liquidatedBy: userId,
+      liquidatedAt: new Date(),
+    });
 
     this.logger.log(`Período ${periodId} liquidado exitosamente`);
 
