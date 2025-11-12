@@ -31,18 +31,18 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
     try {
       setLoadingEmployees(true);
       
-      // Usar el servicio que ya existe
-      const data = await getEmployees();
+      // Solicitar TODOS los empleados activos sin límite de paginación
+      const data = await getEmployees({ 
+        status: 'active',
+        limit: 1000, // Límite alto para obtener todos los empleados
+      });
       console.log('Empleados recibidos:', data); // Para debugging
       
       // Si data es un objeto con propiedad 'data', extraerla
       const employeesArray = Array.isArray(data) ? data : (data as any).data || [];
       
-      // Filtrar solo empleados activos
-      const activeEmployees = employeesArray.filter((emp: Employee) => emp.status === 'active');
-      
-      console.log('Empleados activos:', activeEmployees); // Para debugging
-      setEmployees(activeEmployees);
+      console.log('Empleados activos:', employeesArray); // Para debugging
+      setEmployees(employeesArray);
       
     } catch (error) {
       console.error('Error cargando empleados:', error);
@@ -138,7 +138,7 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
                     </option>
                     {employees.map((emp) => (
                       <option key={emp.id} value={emp.id}>
-                        {emp.firstName} {emp.lastName} - {emp.documentNumber}
+                        {emp.firstName} {emp.lastName} - {emp.identificationNumber}
                       </option>
                     ))}
                   </select>
