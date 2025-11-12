@@ -17,8 +17,10 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
     valor: '',
     cantidad: '1',
     descripcion: '',
+    fecha: new Date().toISOString().split('T')[0],
   });
   const [loading, setLoading] = useState(false);
+  const [loadingEmployees, setLoadingEmployees] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -27,10 +29,26 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
 
   const loadEmployees = async () => {
     try {
-      const data = await getEmployees();
-      setEmployees(data.filter((emp: Employee) => emp.status === 'active'));
+      setLoadingEmployees(true);
+      
+      // Solicitar TODOS los empleados activos sin límite de paginación
+      const data = await getEmployees({ 
+        status: 'active',
+        limit: 1000, // Límite alto para obtener todos los empleados
+      });
+      console.log('Empleados recibidos:', data); // Para debugging
+      
+      // Si data es un objeto con propiedad 'data', extraerla
+      const employeesArray = Array.isArray(data) ? data : (data as any).data || [];
+      
+      console.log('Empleados activos:', employeesArray); // Para debugging
+      setEmployees(employeesArray);
+      
     } catch (error) {
       console.error('Error cargando empleados:', error);
+      alert('Error al cargar la lista de empleados. Por favor, intenta de nuevo.');
+    } finally {
+      setLoadingEmployees(false);
     }
   };
 
@@ -59,7 +77,8 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
         categoria: formData.categoria,
         valor: Number(formData.valor),
         cantidad: Number(formData.cantidad),
-        descripcion: formData.descripcion || undefined,
+        fecha: new Date(formData.fecha).toISOString(),
+        comentario: formData.descripcion || undefined,
       });
       onSuccess();
     } catch (error: any) {
@@ -111,16 +130,22 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
                     id="employeeId"
                     value={formData.employeeId}
                     onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
-                    className={`mt-1 block w-full border ${errors.employeeId ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                    disabled={loadingEmployees}
+                    className={`mt-1 block w-full border ${errors.employeeId ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100`}
                   >
-                    <option value="">Seleccionar empleado</option>
+                    <option value="">
+                      {loadingEmployees ? 'Cargando empleados...' : 'Seleccionar empleado'}
+                    </option>
                     {employees.map((emp) => (
                       <option key={emp.id} value={emp.id}>
-                        {emp.firstName} {emp.lastName} - {emp.documentNumber}
+                        {emp.firstName} {emp.lastName} - {emp.identificationNumber}
                       </option>
                     ))}
                   </select>
                   {errors.employeeId && <p className="mt-1 text-sm text-red-600">{errors.employeeId}</p>}
+                  {!loadingEmployees && employees.length === 0 && (
+                    <p className="mt-1 text-sm text-amber-600">No hay empleados activos disponibles</p>
+                  )}
                 </div>
 
                 {/* Categoría */}
