@@ -1,8 +1,11 @@
 import { Injectable, NotFoundException, ConflictException, InternalServerErrorException, BadRequestException, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, ILike, Or } from 'typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { Employee, EmployeeStatus } from './employee.entity';
 import { Contract } from '../payroll/contract.entity';
+import { User } from '../users/user.entity';
+import { Role } from '../users/role.entity';
 import { CreateEmployeeDto, UpdateEmployeeDto, EmployeeFilterDto } from './dto/employee.dto';
 import { UsersService } from '../users/users.service';
 import { QueueService } from '../queue/queue.service';
@@ -16,6 +19,8 @@ export class EmployeesService {
     private employeesRepository: Repository<Employee>,
     @InjectRepository(Contract)
     private contractRepository: Repository<Contract>,
+    @InjectDataSource()
+    private dataSource: DataSource,
     private usersService: UsersService,
     private queueService: QueueService,
   ) {}
@@ -37,36 +42,62 @@ export class EmployeesService {
       throw new BadRequestException('Se requiere información del contrato para crear el empleado');
     }
 
-    // Si se proporciona email, crear usuario asociado
-    let user = null;
-    if (createEmployeeDto.email) {
-      try {
-        user = await this.usersService.createEmployeeUser(createEmployeeDto.email);
-      } catch (error) {
-        // Si es un ConflictException, re-lanzarlo directamente
-        if (error instanceof ConflictException) {
-          throw error;
-        }
-        // Para otros errores, envolver el mensaje
-        throw new ConflictException(`Error creando usuario: ${error.message}`);
-      }
-    }
-
     // Extraer datos del contrato del DTO
     const { contract: contractData, ...employeeData } = createEmployeeDto;
 
-    // Crear empleado
-    const employee = this.employeesRepository.create({
-      ...employeeData,
-      userId: user?.id,
-    });
+    // Usar transacción para garantizar atomicidad
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
-      const savedEmployee = await this.employeesRepository.save(employee);
+      let userId: string | undefined = undefined;
+
+      // Si se proporciona email, crear usuario asociado dentro de la transacción
+      if (createEmployeeDto.email) {
+        // Verificar si el usuario ya existe
+        const existingUser = await queryRunner.manager.findOne(User, {
+          where: { email: createEmployeeDto.email },
+        });
+
+        if (existingUser) {
+          throw new ConflictException(`Usuario con email ${createEmployeeDto.email} ya existe`);
+        }
+
+        // Buscar rol de empleado
+        const employeeRole = await queryRunner.manager.findOne(Role, {
+          where: { name: 'employee' },
+        });
+
+        if (!employeeRole) {
+          throw new InternalServerErrorException('Rol employee no encontrado en la base de datos');
+        }
+
+        // Crear usuario dentro de la transacción
+        const passwordHash = await bcrypt.hash('ChangeMe123!', 10);
+        
+        const user = queryRunner.manager.create(User, {
+          email: createEmployeeDto.email,
+          passwordHash,
+          roleId: employeeRole.id,
+        });
+
+        const savedUser = await queryRunner.manager.save(User, user);
+        userId = savedUser.id;
+        this.logger.log(`Usuario creado exitosamente. ID: ${userId}, Email: ${createEmployeeDto.email}`);
+      }
+
+      // Crear empleado dentro de la transacción
+      const employee = queryRunner.manager.create(Employee, {
+        ...employeeData,
+        userId,
+      });
+
+      const savedEmployee = await queryRunner.manager.save(Employee, employee);
       this.logger.log(`Empleado creado exitosamente. ID: ${savedEmployee.id}`);
 
-      // Crear el contrato automáticamente
-      const contract = this.contractRepository.create({
+      // Crear el contrato automáticamente dentro de la transacción
+      const contract = queryRunner.manager.create(Contract, {
         employeeId: savedEmployee.id,
         contractType: contractData.contractType,
         position: contractData.position,
@@ -77,12 +108,15 @@ export class EmployeesService {
         isCurrent: true,
       });
 
-      await this.contractRepository.save(contract);
+      await queryRunner.manager.save(Contract, contract);
       this.logger.log(
         `Contrato creado exitosamente para empleado ${savedEmployee.id}. Cargo: ${contractData.position}, Salario: ${contractData.salary}`,
       );
 
-      // Enviar evento a cola para notificaciones
+      // Commit de la transacción
+      await queryRunner.commitTransaction();
+
+      // Enviar evento a cola para notificaciones (fuera de la transacción)
       await this.queueService.publishToQueue('notifications', {
         type: 'employee.created',
         employeeId: savedEmployee.id,
@@ -91,9 +125,14 @@ export class EmployeesService {
 
       return savedEmployee;
     } catch (error) {
-      this.logger.error(`Error creando empleado: ${error.message}`);
+      // Rollback en caso de error
+      await queryRunner.rollbackTransaction();
+      this.logger.error(`Error creando empleado (rollback ejecutado): ${error.message}`);
       
       // Manejar errores específicos de constraints
+      if (error instanceof ConflictException) {
+        throw error;
+      }
       if (error.message.includes('age_check')) {
         throw new BadRequestException('El empleado debe tener al menos 18 años de edad');
       }
@@ -108,6 +147,9 @@ export class EmployeesService {
       }
       
       throw new InternalServerErrorException('Error creando empleado y contrato');
+    } finally {
+      // Liberar el queryRunner
+      await queryRunner.release();
     }
   }
 
