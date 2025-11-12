@@ -50,7 +50,7 @@ foreach ($seed in $selectedSeeds) {
 }
 
 # Para ejecutarlos:
-# $result = Invoke-Seeds -SeedFiles $selectedSeeds -Verbose $true
+# $result = Invoke-Seeds -SeedFiles $selectedSeeds -ShowDetails $true
 
 # ============================================
 # Ejemplo 4: Excluir seeds específicos

@@ -148,17 +148,17 @@ function Invoke-Seeds {
     Ejecuta archivos de seed en orden específico
     .PARAMETER SeedFiles
     Array de rutas de archivos seed a ejecutar en orden
-    .PARAMETER Verbose
+    .PARAMETER ShowDetails
     Si es true, muestra mensajes detallados
     #>
     param (
         [Parameter(Mandatory=$true)]
         [string[]]$SeedFiles,
         
-        [bool]$Verbose = $true
+        [bool]$ShowDetails = $true
     )
     
-    if ($Verbose) {
+    if ($ShowDetails) {
         Write-Host "🌱 Cargando datos de prueba..." -ForegroundColor Yellow
     }
     
@@ -170,7 +170,7 @@ function Invoke-Seeds {
         $fileName = Split-Path $seedFile -Leaf
         
         if (Test-Path $seedFile) {
-            if ($Verbose) {
+            if ($ShowDetails) {
                 Write-Host "  Ejecutando $fileName..." -ForegroundColor Cyan
             }
             
@@ -178,24 +178,24 @@ function Invoke-Seeds {
             
             if ($result) {
                 $seedSuccess++
-                if ($Verbose) {
+                if ($ShowDetails) {
                     Write-Host "    ✅ $fileName completado" -ForegroundColor Green
                 }
             } else {
                 $seedFailed++
-                if ($Verbose) {
+                if ($ShowDetails) {
                     Write-Host "    ⚠️  $fileName ejecutado con advertencias" -ForegroundColor Yellow
                 }
             }
         } else {
             $seedFailed++
-            if ($Verbose) {
+            if ($ShowDetails) {
                 Write-Host "    ❌ Archivo no encontrado: $fileName" -ForegroundColor Red
             }
         }
     }
     
-    if ($Verbose) {
+    if ($ShowDetails) {
         Write-Host "✅ Seeds completados: $seedSuccess/$totalSeeds" -ForegroundColor Green
         if ($seedFailed -gt 0) {
             Write-Host "⚠️  Seeds con advertencias: $seedFailed/$totalSeeds" -ForegroundColor Yellow

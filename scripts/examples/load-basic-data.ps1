@@ -40,7 +40,7 @@ if ($confirmation -ne "S") {
 }
 
 # Ejecutar seeds básicos
-$result = Invoke-Seeds -SeedFiles $basicSeeds -Verbose $true
+$result = Invoke-Seeds -SeedFiles $basicSeeds -ShowDetails $true
 
 Write-Summary -Title "Resultado" -Items @{
     "Total ejecutados" = "$($result.Success)/$($result.Total)"

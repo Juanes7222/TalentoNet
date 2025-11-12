@@ -23,7 +23,7 @@ if ($seedFiles.Count -eq 0) {
 
 Write-Info "Se encontraron $($seedFiles.Count) archivos de seed"
 
-$seedResult = Invoke-Seeds -SeedFiles $seedFiles -Verbose $true
+$seedResult = Invoke-Seeds -SeedFiles $seedFiles -ShowDetails $true
 
 # Resumen
 Write-Summary -Title "Resumen de ejecución de seeds" -Items @{
