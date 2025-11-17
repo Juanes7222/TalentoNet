@@ -132,7 +132,7 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
                     onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
                     className={`w-full px-4 py-3 bg-slate-700 border ${errors.employeeId ? 'border-red-500' : 'border-slate-600'} rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200`}
                     disabled={loadingEmployees}
-                    className={`mt-1 block w-full border ${errors.employeeId ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100`}
+                    // className={`mt-1 block w-full border ${errors.employeeId ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100`}
                   >
                     <option value="">
                       {loadingEmployees ? 'Cargando empleados...' : 'Seleccionar empleado'}

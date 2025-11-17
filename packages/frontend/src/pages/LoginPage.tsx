@@ -113,7 +113,7 @@ export function LoginPage() {
                 <p className="text-xs text-slate-300">
                   <span className="text-blue-400 font-medium">Admin:</span> admin@talentonet.com
                 </p>
-                <p className="text-xs text-slate-400 mt-1">Admin123!</p>
+                <p className="text-xs text-slate-400 mt-1">Password123!</p>
               </div>
               <div className="bg-slate-700 rounded p-3">
                 <p className="text-xs text-slate-300">
