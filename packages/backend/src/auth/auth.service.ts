@@ -18,14 +18,22 @@ export class AuthService {
 
     await this.usersService.updateLastLogin(user.id);
 
-    const payload = { sub: user.id, email: user.email, role: user.role.name };
+    const roles = user.roles.map(role => role.name);
+    const payload = { 
+      sub: user.id, 
+      email: user.email, 
+      roles: roles,
+      // Keep singular 'role' for backward compatibility
+      role: roles[0] || 'employee',
+    };
     
     return {
       access_token: this.jwtService.sign(payload),
       user: {
         id: user.id,
         email: user.email,
-        role: user.role.name,
+        roles: roles,
+        role: roles[0] || 'employee', // backward compatibility
       },
     };
   }
