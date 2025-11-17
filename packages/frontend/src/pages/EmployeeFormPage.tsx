@@ -9,8 +9,8 @@ export function EmployeeFormPage() {
 
   if (id && isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-700 border-t-blue-500"></div>
       </div>
     );
   }
@@ -33,12 +33,17 @@ export function EmployeeFormPage() {
     : undefined;
 
   return (
-    <div className="px-4 py-6 sm:px-0">
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-6">
-          {id ? 'Editar Empleado' : 'Nuevo Empleado'}
-        </h2>
-        <FormEmpleado employeeId={id} initialData={initialData} />
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl shadow-xl p-8 border border-slate-700">
+          <h2 className="text-3xl font-bold text-white mb-2">
+            {id ? '✏️ Editar Empleado' : '➕ Nuevo Empleado'}
+          </h2>
+          <p className="text-slate-400 mb-8">
+            {id ? 'Actualiza la información del empleado' : 'Completa el formulario para registrar un nuevo empleado'}
+          </p>
+          <FormEmpleado employeeId={id} initialData={initialData} />
+        </div>
       </div>
     </div>
   );

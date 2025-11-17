@@ -19,30 +19,30 @@ const SearchFilters = memo(({
   setStatusFilter: (value: string) => void;
   setPage: (page: number) => void;
 }) => (
-  <div className="card">
+  <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 shadow-xl">
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Buscar
+        <label className="block text-sm font-medium text-slate-300 mb-2">
+          🔍 Buscar
         </label>
         <input
           type="text"
           placeholder="Nombre o identificación..."
-          className="input"
+          className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           autoComplete="off"
         />
         {searchInput !== searchQuery && (
-          <p className="text-xs text-gray-500 mt-1">Buscando...</p>
+          <p className="text-xs text-slate-500 mt-2">⏳ Buscando...</p>
         )}
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Estado
+        <label className="block text-sm font-medium text-slate-300 mb-2">
+          📊 Estado
         </label>
         <select
-          className="input"
+          className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
           value={statusFilter}
           onChange={(e) => {
             setStatusFilter(e.target.value);
@@ -103,15 +103,15 @@ export default function ListaEmpleados() {
   if (isLoading && !data) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-700 border-t-blue-500"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-        Error cargando empleados: {error instanceof Error ? error.message : 'Error desconocido'}
+      <div className="bg-red-950 border border-red-800 text-red-200 px-4 py-3 rounded-lg">
+        ⚠️ Error cargando empleados: {error instanceof Error ? error.message : 'Error desconocido'}
       </div>
     );
   }
@@ -119,12 +119,12 @@ export default function ListaEmpleados() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Empleados</h1>
+        <h1 className="text-4xl font-bold text-white">👥 Empleados</h1>
         <Link
           to="/employees/new"
-          className="btn btn-primary"
+          className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg transition duration-200 shadow-lg hover:shadow-xl"
         >
-          + Nuevo Empleado
+          ➕ Nuevo Empleado
         </Link>
       </div>
 
@@ -139,105 +139,107 @@ export default function ListaEmpleados() {
       />
 
       {/* Tabla */}
-      <div className="card overflow-hidden p-0">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Identificación
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Nombre Completo
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Ciudad
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Estado
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Fecha Contratación
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {data?.data.map((employee: Employee) => (
-              <tr key={employee.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {employee.identificationType} {employee.identificationNumber}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    {employee.fullName || `${employee.firstName} ${employee.lastName}`}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {employee.city}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      employee.status === 'active'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }`}
-                  >
-                    {employee.status === 'active' ? 'Activo' : 'Inactivo'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(employee.hireDate).toLocaleDateString('es-CO')}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                  <Link
-                    to={`/employees/${employee.id}`}
-                    className="text-primary-600 hover:text-primary-900"
-                  >
-                    Ver
-                  </Link>
-                  <Link
-                    to={`/employees/${employee.id}/edit`}
-                    className="text-primary-600 hover:text-primary-900"
-                  >
-                    Editar
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(employee.id)}
-                    className="text-red-600 hover:text-red-900"
-                  >
-                    Desactivar
-                  </button>
-                </td>
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 shadow-xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-700">
+            <thead className="bg-slate-900/50">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  Identificación
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  Nombre Completo
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  Ciudad
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  Estado
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  Fecha Contratación
+                </th>
+                <th className="px-6 py-4 text-right text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  Acciones
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-700">
+              {data?.data.map((employee: Employee) => (
+                <tr key={employee.id} className="hover:bg-slate-700/50 transition duration-200">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-300 font-medium">
+                    {employee.identificationType} <span className="text-blue-400">{employee.identificationNumber}</span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-semibold text-white">
+                      {employee.fullName || `${employee.firstName} ${employee.lastName}`}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                    {employee.city}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        employee.status === 'active'
+                          ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                          : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                      }`}
+                    >
+                      {employee.status === 'active' ? '✓ Activo' : '✕ Inactivo'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                    {new Date(employee.hireDate).toLocaleDateString('es-CO')}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
+                    <Link
+                      to={`/employees/${employee.id}`}
+                      className="text-blue-400 hover:text-blue-300 transition duration-200"
+                    >
+                      👁️ Ver
+                    </Link>
+                    <Link
+                      to={`/employees/${employee.id}/edit`}
+                      className="text-yellow-400 hover:text-yellow-300 transition duration-200"
+                    >
+                      ✏️ Editar
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(employee.id)}
+                      className="text-red-400 hover:text-red-300 transition duration-200"
+                    >
+                      🗑️ Desactivar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Paginación */}
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-700">
-          Mostrando {((data?.page || 1) - 1) * (data?.limit || 10) + 1} a{' '}
-          {Math.min((data?.page || 1) * (data?.limit || 10), data?.total || 0)} de{' '}
-          {data?.total || 0} empleados
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 shadow-xl flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="text-sm text-slate-400">
+          Mostrando <span className="text-white font-semibold">{((data?.page || 1) - 1) * (data?.limit || 10) + 1}</span> a{' '}
+          <span className="text-white font-semibold">{Math.min((data?.page || 1) * (data?.limit || 10), data?.total || 0)}</span> de{' '}
+          <span className="text-white font-semibold">{data?.total || 0}</span> empleados
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="btn btn-secondary disabled:opacity-50"
+            className="px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition duration-200"
           >
-            Anterior
+            ← Anterior
           </button>
           <button
             onClick={() => setPage((p) => p + 1)}
             disabled={!data || page >= Math.ceil(data.total / data.limit)}
-            className="btn btn-secondary disabled:opacity-50"
+            className="px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition duration-200"
           >
-            Siguiente
+            Siguiente →
           </button>
         </div>
       </div>
