@@ -34,6 +34,11 @@ export class CreateUserDto {
   @IsUUID('4')
   employeeId?: string;
 
+  @ApiPropertyOptional({ example: '1234567890', description: 'Identification number (used as default password)' })
+  @IsOptional()
+  @IsString()
+  identificationNumber?: string;
+
   @ApiPropertyOptional({ example: false, description: 'Send invitation email' })
   @IsOptional()
   @IsBoolean()

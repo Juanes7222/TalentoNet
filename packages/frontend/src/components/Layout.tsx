@@ -1,5 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { PermissionGate } from './PermissionGate';
 import { useState } from 'react';
 
 export function Layout() {
@@ -26,6 +27,8 @@ export function Layout() {
     { path: '/payroll', label: 'Nómina' },
     { path: '/settlements', label: 'Liquidaciones' },
     { path: '/certifications', label: 'Certificaciones' },
+    { path: '/users', label: 'Usuarios', permission: 'users.read' },
+    { path: '/roles', label: 'Roles', permission: 'roles.manage' },
   ];
 
   return (
@@ -47,17 +50,32 @@ export function Layout() {
             {/* Desktop Navigation */}
             <div className="hidden lg:flex lg:items-center lg:space-x-1">
               {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActive(item.path)
-                      ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
-                  }`}
-                >
-                  {item.label}
-                </Link>
+                item.permission ? (
+                  <PermissionGate key={item.path} permission={item.permission}>
+                    <Link
+                      to={item.path}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        isActive(item.path)
+                          ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </PermissionGate>
+                ) : (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      isActive(item.path)
+                        ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                )
               ))}
             </div>
 
@@ -71,7 +89,9 @@ export function Layout() {
                 </div>
                 <div className="text-right">
                   <p className="text-slate-200 font-medium text-sm">{user?.email}</p>
-                  <p className="text-slate-500 text-xs">{user?.role}</p>
+                  {user?.roles && user.roles.length > 0 && (
+                    <p className="text-slate-500 text-xs">{user.roles.map(r => r.name).join(', ')}</p>
+                  )}
                 </div>
               </div>
 
@@ -106,18 +126,34 @@ export function Layout() {
           {mobileMenuOpen && (
             <div className="lg:hidden pb-4 space-y-2 border-t border-slate-700 mt-4 pt-4">
               {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`block px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActive(item.path)
-                      ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
-                  }`}
-                >
-                  {item.label}
-                </Link>
+                item.permission ? (
+                  <PermissionGate key={item.path} permission={item.permission}>
+                    <Link
+                      to={item.path}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`block px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        isActive(item.path)
+                          ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </PermissionGate>
+                ) : (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`block px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      isActive(item.path)
+                        ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                )
               ))}
               <button
                 onClick={() => {

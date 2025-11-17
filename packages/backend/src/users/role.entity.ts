@@ -13,6 +13,9 @@ export class Role {
   @Column({ nullable: true, type: 'text' })
   description: string;
 
+  @Column({ name: 'is_system', default: false })
+  isSystem: boolean;
+
   @ManyToMany(() => Permission, (permission) => permission.roles, { eager: true })
   @JoinTable({
     name: 'role_permissions',

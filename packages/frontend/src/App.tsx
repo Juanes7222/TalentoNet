@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { Layout } from './components/Layout';
 import { PrivateRoute } from './components/PrivateRoute';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { EmployeesListPage } from './pages/EmployeesListPage';
@@ -24,6 +25,10 @@ import SettlementsListPage from './pages/settlements/SettlementsListPage';
 import SettlementDetailPage from './pages/settlements/SettlementDetailPage';
 import CertificationsListPage from './pages/certifications/CertificationsListPage';
 import NewCertificationPage from './pages/certifications/NewCertificationPage';
+import { UsersListPage } from './pages/users/UsersListPage';
+import { UserFormPage } from './pages/users/UserFormPage';
+import { UserDetailPage } from './pages/users/UserDetailPage';
+import { RolesListPage } from './pages/roles/RolesListPage';
 
 function App() {
   return (
@@ -67,6 +72,15 @@ function App() {
             {/* Rutas de certificaciones */}
             <Route path="/certifications" element={<CertificationsListPage />} />
             <Route path="/certifications/new" element={<NewCertificationPage />} />
+            
+            {/* Rutas de usuarios */}
+            <Route path="/users" element={<ProtectedRoute requiredPermission="users.read"><UsersListPage /></ProtectedRoute>} />
+            <Route path="/users/new" element={<ProtectedRoute requiredPermission="users.create"><UserFormPage /></ProtectedRoute>} />
+            <Route path="/users/:id" element={<ProtectedRoute requiredPermission="users.read"><UserDetailPage /></ProtectedRoute>} />
+            <Route path="/users/:id/edit" element={<ProtectedRoute requiredPermission="users.update"><UserFormPage /></ProtectedRoute>} />
+            
+            {/* Rutas de roles */}
+            <Route path="/roles" element={<ProtectedRoute requiredPermission="roles.manage"><RolesListPage /></ProtectedRoute>} />
             
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Route>

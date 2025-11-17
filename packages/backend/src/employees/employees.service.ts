@@ -4,7 +4,7 @@ import { Repository, DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Employee, EmployeeStatus } from './employee.entity';
 import { Contract } from '../payroll/contract.entity';
-import { User } from '../users/user.entity';
+import { User, UserStatus } from '../users/user.entity';
 import { Role } from '../users/role.entity';
 import { CreateEmployeeDto, UpdateEmployeeDto, EmployeeFilterDto } from './dto/employee.dto';
 import { UsersService } from '../users/users.service';
@@ -73,18 +73,19 @@ export class EmployeesService {
           throw new InternalServerErrorException('Rol employee no encontrado en la base de datos');
         }
 
-        // Crear usuario dentro de la transacción
-        const passwordHash = await bcrypt.hash('ChangeMe123!', 10);
+        // Crear usuario usando el número de documento como contraseña
+        const passwordHash = await bcrypt.hash(createEmployeeDto.identificationNumber, 10);
         
         const user = queryRunner.manager.create(User, {
           email: createEmployeeDto.email,
           passwordHash,
+          status: UserStatus.ACTIVE, // Usuario activo porque tiene contraseña
           roleId: employeeRole.id,
         });
 
         const savedUser = await queryRunner.manager.save(User, user);
         userId = savedUser.id;
-        this.logger.log(`Usuario creado exitosamente. ID: ${userId}, Email: ${createEmployeeDto.email}`);
+        this.logger.log(`Usuario creado exitosamente. ID: ${userId}, Email: ${createEmployeeDto.email}, Contraseña: ${createEmployeeDto.identificationNumber}`);
       }
 
       // Crear empleado dentro de la transacción

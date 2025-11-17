@@ -25,7 +25,10 @@ export class UsersService {
   ) {}
 
   async createEmployeeUser(email: string): Promise<User> {
-    const existing = await this.usersRepository.findOne({ where: { email } });
+    const existing = await this.usersRepository.findOne({ 
+      where: { email },
+      relations: ['roles', 'roles.permissions']
+    });
     if (existing) {
       throw new ConflictException(`Usuario con email ${email} ya existe`);
     }
@@ -90,7 +93,8 @@ export class UsersService {
   async create(dto: CreateUserDto, createdBy?: string): Promise<User> {
     // Check if email already exists
     const existing = await this.usersRepository.findOne({ 
-      where: { email: dto.email } 
+      where: { email: dto.email },
+      relations: ['roles', 'roles.permissions']
     });
     
     if (existing) {
@@ -114,17 +118,20 @@ export class UsersService {
       }
     }
 
-    // Hash password if provided
+    // Hash password if provided, otherwise use identification number
     let passwordHash: string | undefined;
     if (dto.password) {
       passwordHash = await bcrypt.hash(dto.password, 10);
+    } else if (dto.identificationNumber) {
+      // Use identification number as default password
+      passwordHash = await bcrypt.hash(dto.identificationNumber, 10);
     }
 
     const user = this.usersRepository.create({
       email: dto.email,
       fullName: dto.fullName,
       passwordHash,
-      status: dto.status || UserStatus.INVITED,
+      status: passwordHash ? UserStatus.ACTIVE : (dto.status || UserStatus.INVITED),
       employeeId: dto.employeeId,
       createdById: createdBy,
       roles,
@@ -153,7 +160,8 @@ export class UsersService {
 
     if (dto.email && dto.email !== user.email) {
       const existing = await this.usersRepository.findOne({ 
-        where: { email: dto.email } 
+        where: { email: dto.email },
+        relations: ['roles', 'roles.permissions']
       });
       
       if (existing) {

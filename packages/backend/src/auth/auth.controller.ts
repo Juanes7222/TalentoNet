@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiProperty } from '@nestjs/swagger
 import { IsEmail, IsString, MinLength } from 'class-validator';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { UsersService } from '../users/users.service';
 
 export class LoginDto {
   @ApiProperty({ example: 'admin@talentonet.com' })
@@ -18,7 +19,10 @@ export class LoginDto {
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private usersService: UsersService,
+  ) {}
 
   @Post('login')
   @ApiOperation({ summary: 'Login con email y password' })
@@ -32,6 +36,8 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Obtener perfil del usuario autenticado' })
   async getProfile(@Request() req: any) {
-    return req.user;
+    // Cargar el usuario completo con todas las relaciones
+    const user = await this.usersService.findById(req.user.id);
+    return user;
   }
 }
