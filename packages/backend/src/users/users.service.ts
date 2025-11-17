@@ -253,7 +253,7 @@ export class UsersService {
     const [items, total] = await query.getManyAndCount();
 
     return {
-      items,
+      data: items, // Cambiar 'items' a 'data' para coincidir con el frontend
       total,
       page,
       limit,

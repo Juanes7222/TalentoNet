@@ -41,37 +41,37 @@ function App() {
           {/* Rutas protegidas */}
           <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
             <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/employees" element={<EmployeesListPage />} />
-            <Route path="/employees/new" element={<EmployeeFormPage />} />
-            <Route path="/employees/:id" element={<EmployeeDetailPage />} />
-            <Route path="/employees/:id/edit" element={<EmployeeFormPage />} />
+            <Route path="/employees" element={<ProtectedRoute requiredPermission="employees.read"><EmployeesListPage /></ProtectedRoute>} />
+            <Route path="/employees/new" element={<ProtectedRoute requiredPermission="employees.create"><EmployeeFormPage /></ProtectedRoute>} />
+            <Route path="/employees/:id" element={<ProtectedRoute requiredPermission="employees.read"><EmployeeDetailPage /></ProtectedRoute>} />
+            <Route path="/employees/:id/edit" element={<ProtectedRoute requiredPermission="employees.update"><EmployeeFormPage /></ProtectedRoute>} />
             
             {/* Rutas de reclutamiento */}
-            <Route path="/recruitment/vacancies" element={<VacanciesListPage />} />
-            <Route path="/recruitment/vacancies/new" element={<VacancyFormPage />} />
-            <Route path="/recruitment/vacancies/:id" element={<VacancyDetailPage />} />
-            <Route path="/recruitment/vacancies/:id/edit" element={<VacancyEditPage />} />
-            <Route path="/recruitment/candidates" element={<CandidatesListPage />} />
-            <Route path="/recruitment/candidates/new" element={<CandidateFormPage />} />
-            <Route path="/recruitment/candidates/:id" element={<CandidateDetailPage />} />
+            <Route path="/recruitment/vacancies" element={<ProtectedRoute requiredPermission="recruitment.read"><VacanciesListPage /></ProtectedRoute>} />
+            <Route path="/recruitment/vacancies/new" element={<ProtectedRoute requiredPermission="recruitment.create"><VacancyFormPage /></ProtectedRoute>} />
+            <Route path="/recruitment/vacancies/:id" element={<ProtectedRoute requiredPermission="recruitment.read"><VacancyDetailPage /></ProtectedRoute>} />
+            <Route path="/recruitment/vacancies/:id/edit" element={<ProtectedRoute requiredPermission="recruitment.update"><VacancyEditPage /></ProtectedRoute>} />
+            <Route path="/recruitment/candidates" element={<ProtectedRoute requiredPermission="recruitment.read"><CandidatesListPage /></ProtectedRoute>} />
+            <Route path="/recruitment/candidates/new" element={<ProtectedRoute requiredPermission="recruitment.create"><CandidateFormPage /></ProtectedRoute>} />
+            <Route path="/recruitment/candidates/:id" element={<ProtectedRoute requiredPermission="recruitment.read"><CandidateDetailPage /></ProtectedRoute>} />
             
             {/* Rutas de afiliaciones */}
-            <Route path="/affiliations" element={<AffiliationsListPage />} />
-            <Route path="/affiliations/new" element={<AffiliationFormPage />} />
-            <Route path="/affiliations/:id" element={<AffiliationDetailPage />} />
-            <Route path="/affiliations/report" element={<AffiliationReportPage />} />
+            <Route path="/affiliations" element={<ProtectedRoute requiredPermission="affiliations.read"><AffiliationsListPage /></ProtectedRoute>} />
+            <Route path="/affiliations/new" element={<ProtectedRoute requiredPermission="affiliations.create"><AffiliationFormPage /></ProtectedRoute>} />
+            <Route path="/affiliations/:id" element={<ProtectedRoute requiredPermission="affiliations.read"><AffiliationDetailPage /></ProtectedRoute>} />
+            <Route path="/affiliations/report" element={<ProtectedRoute requiredPermission="affiliations.read"><AffiliationReportPage /></ProtectedRoute>} />
             
             {/* Rutas de nómina */}
-            <Route path="/payroll" element={<PayrollPeriodsPage />} />
-            <Route path="/payroll/:id" element={<PayrollPeriodDetailPage />} />
+            <Route path="/payroll" element={<ProtectedRoute requiredPermission="payroll.read"><PayrollPeriodsPage /></ProtectedRoute>} />
+            <Route path="/payroll/:id" element={<ProtectedRoute requiredPermission="payroll.read"><PayrollPeriodDetailPage /></ProtectedRoute>} />
             
             {/* Rutas de liquidaciones */}
-            <Route path="/settlements" element={<SettlementsListPage />} />
-            <Route path="/settlements/:id" element={<SettlementDetailPage />} />
+            <Route path="/settlements" element={<ProtectedRoute requiredPermission="settlements.read"><SettlementsListPage /></ProtectedRoute>} />
+            <Route path="/settlements/:id" element={<ProtectedRoute requiredPermission="settlements.read"><SettlementDetailPage /></ProtectedRoute>} />
             
             {/* Rutas de certificaciones */}
-            <Route path="/certifications" element={<CertificationsListPage />} />
-            <Route path="/certifications/new" element={<NewCertificationPage />} />
+            <Route path="/certifications" element={<ProtectedRoute requiredPermission="certifications.read"><CertificationsListPage /></ProtectedRoute>} />
+            <Route path="/certifications/new" element={<ProtectedRoute requiredPermission="certifications.create"><NewCertificationPage /></ProtectedRoute>} />
             
             {/* Rutas de usuarios */}
             <Route path="/users" element={<ProtectedRoute requiredPermission="users.read"><UsersListPage /></ProtectedRoute>} />

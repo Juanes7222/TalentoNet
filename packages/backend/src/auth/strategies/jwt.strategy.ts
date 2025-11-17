@@ -14,6 +14,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    return { userId: payload.sub, email: payload.email, role: payload.role };
+    // El payload del JWT debe incluir los roles y permisos
+    return { 
+      userId: payload.sub, 
+      email: payload.email, 
+      role: payload.role,
+      roles: payload.roles || [] // Incluir roles completos con permisos
+    };
   }
 }

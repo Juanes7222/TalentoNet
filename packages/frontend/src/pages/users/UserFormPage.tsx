@@ -32,9 +32,11 @@ export function UserFormPage() {
   const loadRoles = async () => {
     try {
       const data = await rolesService.findAll();
+      console.log('Roles cargados:', data);
       setRoles(data);
     } catch (error) {
       console.error('Error loading roles:', error);
+      alert('Error al cargar roles. Ver consola para detalles.');
     }
   };
 

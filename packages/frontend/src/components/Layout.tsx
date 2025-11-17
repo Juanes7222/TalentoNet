@@ -20,13 +20,13 @@ export function Layout() {
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard' },
-    { path: '/employees', label: 'Empleados' },
-    { path: '/recruitment/vacancies', label: 'Vacantes' },
-    { path: '/recruitment/candidates', label: 'Candidatos' },
-    { path: '/affiliations', label: 'Afiliaciones' },
-    { path: '/payroll', label: 'Nómina' },
-    { path: '/settlements', label: 'Liquidaciones' },
-    { path: '/certifications', label: 'Certificaciones' },
+    { path: '/employees', label: 'Empleados', permission: 'employees.read' },
+    { path: '/recruitment/vacancies', label: 'Vacantes', permission: 'recruitment.read' },
+    { path: '/recruitment/candidates', label: 'Candidatos', permission: 'recruitment.read' },
+    { path: '/affiliations', label: 'Afiliaciones', permission: 'affiliations.read' },
+    { path: '/payroll', label: 'Nómina', permission: 'payroll.read' },
+    { path: '/settlements', label: 'Liquidaciones', permission: 'settlements.read' },
+    { path: '/certifications', label: 'Certificaciones', permission: 'certifications.read' },
     { path: '/users', label: 'Usuarios', permission: 'users.read' },
     { path: '/roles', label: 'Roles', permission: 'roles.manage' },
   ];

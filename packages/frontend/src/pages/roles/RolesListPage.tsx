@@ -23,10 +23,13 @@ export function RolesListPage() {
         rolesService.findAll(),
         permissionsService.findAll(),
       ]);
+      console.log('Roles cargados:', rolesData);
+      console.log('Permisos cargados:', permissionsData);
       setRoles(rolesData);
       setPermissions(permissionsData);
     } catch (error) {
       console.error('Error loading data:', error);
+      alert('Error al cargar datos. Ver consola para detalles.');
     } finally {
       setLoading(false);
     }

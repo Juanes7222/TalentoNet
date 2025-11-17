@@ -1,17 +1,22 @@
 import { useAuth } from '../contexts/AuthContext';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { EmployeeDashboardPage } from './EmployeeDashboardPage';
 
 export function DashboardPage() {
-  const { user } = useAuth();
-  const [chartData, setChartData] = useState<number[]>([]);
+  const { user, hasRole } = useAuth();
+  const [chartData, setChartData] = useState<number[]>(() => 
+    Array.from({ length: 12 }, () => Math.floor(Math.random() * 100) + 20)
+  );
 
-  // Generar datos dinámicos para el gráfico
-  useEffect(() => {
-    const data = Array.from({ length: 12 }, () => Math.floor(Math.random() * 100) + 20);
-    setChartData(data);
-  }, []);
+  // Si SOLO es empleado (sin otros roles), mostrar su dashboard específico
+  const isOnlyEmployee = user?.roles?.length === 1 && hasRole('employee');
+  
+  if (isOnlyEmployee) {
+    return <EmployeeDashboardPage />;
+  }
 
-  const maxValue = Math.max(...chartData);
+  const maxValue = Math.max(...chartData, 1); // Fallback to 1 to avoid NaN
   const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
   return (
@@ -112,7 +117,7 @@ export function DashboardPage() {
               <span className="text-slate-500">Máximo: <span className="text-blue-400 font-semibold">{maxValue}</span></span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-slate-500">Promedio: <span className="text-blue-400 font-semibold">{Math.round(chartData.reduce((a, b) => a + b, 0) / chartData.length)}</span></span>
+              <span className="text-slate-500">Promedio: <span className="text-blue-400 font-semibold">{chartData.length > 0 ? Math.round(chartData.reduce((a, b) => a + b, 0) / chartData.length) : 0}</span></span>
             </div>
           </div>
           <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition duration-200">

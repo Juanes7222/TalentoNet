@@ -212,14 +212,18 @@ export function UsersListPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1">
-                        {user.roles.map((role) => (
-                          <span
-                            key={role.id}
-                            className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded"
-                          >
-                            {role.name}
-                          </span>
-                        ))}
+                        {user.roles && user.roles.length > 0 ? (
+                          user.roles.map((role) => (
+                            <span
+                              key={role.id}
+                              className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded"
+                            >
+                              {role.name}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-sm text-gray-400">Sin roles</span>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(user.status)}</td>
