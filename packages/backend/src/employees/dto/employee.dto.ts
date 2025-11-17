@@ -1,6 +1,81 @@
-import { IsString, IsEmail, IsEnum, IsOptional, IsDateString, IsNotEmpty, Length, Matches, IsBoolean } from 'class-validator';
+import { IsString, IsEmail, IsEnum, IsOptional, IsDateString, IsNotEmpty, Length, Matches, IsBoolean, IsNumber, Min, ValidateNested, IsObject, Validate, ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IdentificationType, Gender, EmployeeStatus } from '../employee.entity';
+
+/**
+ * Validador personalizado para verificar edad mínima
+ */
+@ValidatorConstraint({ name: 'isOldEnough', async: false })
+export class IsOldEnoughConstraint implements ValidatorConstraintInterface {
+  validate(dateString: string, args: ValidationArguments) {
+    const birthDate = new Date(dateString);
+    const today = new Date();
+    const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    return birthDate <= eighteenYearsAgo;
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return 'El empleado debe tener al menos 18 años de edad';
+  }
+}
+
+/**
+ * Validador personalizado para verificar que la fecha de fin sea posterior a la de inicio
+ */
+@ValidatorConstraint({ name: 'isEndDateValid', async: false })
+export class IsEndDateValidConstraint implements ValidatorConstraintInterface {
+  validate(endDateString: string, args: ValidationArguments) {
+    if (!endDateString) return true; // endDate es opcional
+    
+    const object = args.object as any;
+    const startDate = new Date(object.startDate);
+    const endDate = new Date(endDateString);
+    
+    return endDate > startDate;
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return 'La fecha de fin del contrato debe ser posterior a la fecha de inicio';
+  }
+}
+
+/**
+ * DTO para información del contrato al crear empleado
+ */
+export class CreateEmployeeContractDto {
+  @ApiProperty({ description: 'Tipo de contrato', example: 'indefinido', enum: ['indefinido', 'fijo', 'obra_labor', 'prestacion_servicios'] })
+  @IsString()
+  @IsNotEmpty()
+  contractType: string;
+
+  @ApiProperty({ description: 'Cargo', example: 'Desarrollador Senior' })
+  @IsString()
+  @IsNotEmpty()
+  position: string;
+
+  @ApiProperty({ description: 'Departamento', example: 'Tecnología' })
+  @IsString()
+  @IsNotEmpty()
+  department: string;
+
+  @ApiProperty({ description: 'Salario', example: 5000000 })
+  @IsNumber()
+  @Min(0)
+  @IsNotEmpty()
+  salary: number;
+
+  @ApiProperty({ description: 'Fecha de inicio del contrato', example: '2024-01-01' })
+  @IsDateString()
+  @IsNotEmpty()
+  startDate: string;
+
+  @ApiPropertyOptional({ description: 'Fecha de fin del contrato (solo para contratos fijos)', example: '2024-12-31' })
+  @IsDateString()
+  @IsOptional()
+  @Validate(IsEndDateValidConstraint)
+  endDate?: string;
+}
 
 export class CreateEmployeeDto {
   @ApiProperty({ description: 'Tipo de identificación', enum: IdentificationType })
@@ -29,6 +104,7 @@ export class CreateEmployeeDto {
   @ApiProperty({ description: 'Fecha de nacimiento', example: '1990-01-15' })
   @IsDateString()
   @IsNotEmpty()
+  @Validate(IsOldEnoughConstraint)
   dateOfBirth: string;
 
   @ApiPropertyOptional({ description: 'Género', enum: Gender })
@@ -71,6 +147,12 @@ export class CreateEmployeeDto {
   @IsEmail()
   @IsOptional()
   email?: string;
+
+  @ApiProperty({ description: 'Información del contrato (requerido)', type: CreateEmployeeContractDto })
+  @ValidateNested()
+  @Type(() => CreateEmployeeContractDto)
+  @IsNotEmpty()
+  contract: CreateEmployeeContractDto;
 }
 
 export class UpdateEmployeeDto {
@@ -224,10 +306,14 @@ export class EmployeeFilterDto {
   department?: string;
 
   @ApiPropertyOptional({ description: 'Página', example: 1, default: 1 })
+  @Type(() => Number)
+  @IsNumber()
   @IsOptional()
   page?: number;
 
   @ApiPropertyOptional({ description: 'Tamaño de página', example: 10, default: 10 })
+  @Type(() => Number)
+  @IsNumber()
   @IsOptional()
   limit?: number;
 }

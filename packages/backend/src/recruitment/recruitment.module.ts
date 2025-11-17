@@ -9,6 +9,7 @@ import {
   CandidateStateHistory,
 } from './entities';
 import { Employee } from '../employees/employee.entity';
+import { Contract } from '../payroll/contract.entity';
 
 // Services
 import {
@@ -31,7 +32,8 @@ import {
       Candidate,
       Interview,
       CandidateStateHistory,
-      Employee, // Agregado para crear empleados desde candidatos
+      Employee, // Para crear empleados desde candidatos
+      Contract, // Para crear contratos automáticamente al contratar
     ]),
   ],
   controllers: [
