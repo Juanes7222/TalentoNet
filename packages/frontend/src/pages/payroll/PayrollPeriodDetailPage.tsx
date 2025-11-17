@@ -108,7 +108,11 @@ export default function PayrollPeriodDetailPage() {
   };
 
   if (loading || !period) {
-    return <div className="p-6">Cargando...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-700 border-t-blue-500"></div>
+      </div>
+    );
   }
 
   const totalDevengado = entries.reduce((sum, entry) => sum + Number(entry.totalDevengado), 0);
@@ -116,280 +120,270 @@ export default function PayrollPeriodDetailPage() {
   const totalNeto = entries.reduce((sum, entry) => sum + Number(entry.neto), 0);
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="mb-6">
-        <button
-          onClick={() => navigate('/payroll')}
-          className="text-indigo-600 hover:text-indigo-800 mb-2 inline-flex items-center"
-        >
-          <svg className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Volver a períodos
-        </button>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-8">
+      <div className="space-y-6 max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="space-y-4">
+          <button
+            onClick={() => navigate('/payroll')}
+            className="text-blue-400 hover:text-blue-300 font-medium transition flex items-center gap-2"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            ← Volver a períodos
+          </button>
 
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{period.descripcion || `Período ${period.id}`}</h1>
-            <p className="mt-1 text-sm text-gray-500">
-              {new Date(period.fechaInicio).toLocaleDateString('es-CO')} - {new Date(period.fechaFin).toLocaleDateString('es-CO')}
-            </p>
+          <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl p-8 border border-slate-700 shadow-xl">
+            <div className="flex justify-between items-start gap-6 flex-wrap">
+              <div>
+                <h1 className="text-4xl font-bold text-white mb-2">
+                  📋 {period.descripcion || `Período ${period.id}`}
+                </h1>
+                <p className="text-slate-400">
+                  {new Date(period.fechaInicio).toLocaleDateString('es-CO')} - {new Date(period.fechaFin).toLocaleDateString('es-CO')}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 flex-wrap">
+                <span className={`px-4 py-2 rounded-full text-sm font-semibold border ${
+                  period.estado === 'abierto'
+                    ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                    : period.estado === 'liquidado'
+                    ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+                    : period.estado === 'aprobado'
+                    ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                    : 'bg-slate-500/20 text-slate-400 border-slate-500/30'
+                }`}>
+                  {getEstadoLabel(period.estado)}
+                </span>
+
+                {/* Acciones según estado */}
+                {period.estado === 'abierto' && (
+                  <>
+                    <button
+                      onClick={() => setShowAddNovedadModal(true)}
+                      className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-lg transition duration-200"
+                    >
+                      ➕ Agregar Novedad
+                    </button>
+                    <button
+                      onClick={handleLiquidate}
+                      disabled={processing}
+                      className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-slate-600 disabled:to-slate-700 text-white font-semibold rounded-lg transition duration-200 shadow-lg disabled:cursor-not-allowed"
+                    >
+                      {processing ? '⏳ Procesando...' : '💸 Liquidar Período'}
+                    </button>
+                  </>
+                )}
+
+                {period.estado === 'liquidado' && (
+                  <button
+                    onClick={handleApprove}
+                    disabled={processing}
+                    className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-slate-600 disabled:to-slate-700 text-white font-semibold rounded-lg transition duration-200 shadow-lg disabled:cursor-not-allowed"
+                  >
+                    {processing ? '⏳ Procesando...' : '✓ Aprobar Período'}
+                  </button>
+                )}
+
+                {period.estado === 'aprobado' && (
+                  <button
+                    onClick={handleClose}
+                    disabled={processing}
+                    className="px-4 py-2 bg-slate-600 hover:bg-slate-500 text-white font-semibold rounded-lg transition duration-200 shadow-lg disabled:cursor-not-allowed"
+                  >
+                    {processing ? '⏳ Procesando...' : '🔒 Cerrar Período'}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 overflow-hidden">
+          <div className="flex border-b border-slate-700 bg-slate-900/50">
+            {(['resumen', 'novedades', 'liquidaciones'] as TabType[]).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 px-6 py-4 font-medium text-sm transition-colors ${
+                  activeTab === tab
+                    ? 'text-blue-400 border-b-2 border-blue-500 bg-slate-900'
+                    : 'text-slate-400 hover:text-slate-300'
+                }`}
+              >
+                {tab === 'resumen' && '📊 Resumen'}
+                {tab === 'novedades' && `➕ Novedades (${novedades.length})`}
+                {tab === 'liquidaciones' && `💰 Liquidaciones (${entries.length})`}
+              </button>
+            ))}
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getEstadoBadgeColor(period.estado)}`}>
-              {getEstadoLabel(period.estado)}
-            </span>
+          {/* Tab Content */}
+          <div className="p-6">
+            {activeTab === 'resumen' && (
+              <div className="space-y-6">
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="bg-gradient-to-br from-slate-700 to-slate-800 rounded-lg p-6 border border-slate-600">
+                    <p className="text-sm text-slate-400 mb-2">👥 Empleados Liquidados</p>
+                    <p className="text-3xl font-bold text-white">{entries.length}</p>
+                  </div>
 
-            {/* Acciones según estado */}
-            {period.estado === 'abierto' && (
-              <>
-                <button
-                  onClick={() => setShowAddNovedadModal(true)}
-                  className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                >
-                  Agregar Novedad
-                </button>
-                <button
-                  onClick={handleLiquidate}
-                  disabled={processing}
-                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
-                >
-                  {processing ? 'Procesando...' : 'Liquidar Período'}
-                </button>
-              </>
+                  <div className="bg-gradient-to-br from-green-900 to-green-800 rounded-lg p-6 border border-green-700">
+                    <p className="text-sm text-green-300 mb-2">📈 Total Devengado</p>
+                    <p className="text-3xl font-bold text-green-400">{formatCurrency(totalDevengado)}</p>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-red-900 to-red-800 rounded-lg p-6 border border-red-700">
+                    <p className="text-sm text-red-300 mb-2">📉 Total Deducido</p>
+                    <p className="text-3xl font-bold text-red-400">{formatCurrency(totalDeducido)}</p>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-blue-900 to-blue-800 rounded-lg p-6 border border-blue-700">
+                    <p className="text-sm text-blue-300 mb-2">💳 Neto a Pagar</p>
+                    <p className="text-3xl font-bold text-blue-400">{formatCurrency(totalNeto)}</p>
+                  </div>
+                </div>
+
+                {/* Información del período */}
+                <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700">
+                  <h3 className="text-lg font-bold text-white mb-4">ℹ️ Información del Período</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center py-3 border-b border-slate-700">
+                      <span className="text-slate-400">Tipo</span>
+                      <span className="font-semibold text-white capitalize">{period.tipo}</span>
+                    </div>
+                    <div className="flex justify-between items-center py-3 border-b border-slate-700">
+                      <span className="text-slate-400">Novedades</span>
+                      <span className="font-semibold text-white">{novedades.length} registradas</span>
+                    </div>
+                    {period.liquidatedAt && (
+                      <div className="flex justify-between items-center py-3 border-b border-slate-700">
+                        <span className="text-slate-400">Liquidado</span>
+                        <span className="font-semibold text-green-400">
+                          {new Date(period.liquidatedAt).toLocaleString('es-CO')}
+                        </span>
+                      </div>
+                    )}
+                    {period.approvedAt && (
+                      <div className="flex justify-between items-center py-3">
+                        <span className="text-slate-400">Aprobado</span>
+                        <span className="font-semibold text-green-400">
+                          {new Date(period.approvedAt).toLocaleString('es-CO')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
             )}
 
-            {period.estado === 'liquidado' && (
-              <button
-                onClick={handleApprove}
-                disabled={processing}
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-50"
-              >
-                {processing ? 'Procesando...' : 'Aprobar Período'}
-              </button>
+            {activeTab === 'novedades' && (
+              <div className="space-y-4">
+                {period.estado === 'abierto' && (
+                  <button
+                    onClick={() => setShowAddNovedadModal(true)}
+                    className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg transition duration-200 shadow-lg"
+                  >
+                    ➕ Agregar Novedad
+                  </button>
+                )}
+                
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-slate-700">
+                    <thead className="bg-slate-900/50">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">Empleado</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">Tipo</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">Categoría</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">Valor</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">Cantidad</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-700">
+                      {novedades.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="px-6 py-8 text-center text-sm text-slate-400">
+                            No hay novedades registradas
+                          </td>
+                        </tr>
+                      ) : (
+                        novedades.map((novedad) => (
+                          <tr key={novedad.id} className="hover:bg-slate-700/50 transition">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
+                              {novedad.employee?.firstName} {novedad.employee?.lastName}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{novedad.tipo}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`px-3 py-1 text-xs leading-5 font-semibold rounded-full border ${
+                                novedad.categoria === 'devengo'
+                                  ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                                  : 'bg-red-500/20 text-red-400 border-red-500/30'
+                              }`}>
+                                {novedad.categoria}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{formatCurrency(Number(novedad.valor))}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{novedad.cantidad}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-white">
+                              {formatCurrency(Number(novedad.valor) * Number(novedad.cantidad))}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             )}
 
-            {period.estado === 'aprobado' && (
-              <button
-                onClick={handleClose}
-                disabled={processing}
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 disabled:opacity-50"
-              >
-                {processing ? 'Procesando...' : 'Cerrar Período'}
-              </button>
+            {activeTab === 'liquidaciones' && (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-slate-700">
+                  <thead className="bg-slate-900/50">
+                    <tr>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">Empleado</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">Salario Base</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">Devengado</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">Deducido</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">Neto</th>
+                      <th className="px-6 py-4 text-right text-xs font-semibold text-slate-300 uppercase tracking-wider">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-700">
+                    {entries.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-8 text-center text-sm text-slate-400">
+                          {period.estado === 'abierto' ? 'El período aún no ha sido liquidado' : 'No hay liquidaciones'}
+                        </td>
+                      </tr>
+                    ) : (
+                      entries.map((entry) => (
+                        <tr key={entry.id} className="hover:bg-slate-700/50 transition">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
+                            {entry.employee?.firstName} {entry.employee?.lastName}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{formatCurrency(Number(entry.salarioBase))}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-green-400 font-semibold">{formatCurrency(Number(entry.totalDevengado))}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-red-400">{formatCurrency(Number(entry.totalDeducido))}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-400 font-semibold">{formatCurrency(Number(entry.neto))}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button className="text-blue-400 hover:text-blue-300 transition">👁️ Ver detalle</button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </div>
       </div>
-
-      {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="-mb-px flex space-x-8">
-          <button
-            onClick={() => setActiveTab('resumen')}
-            className={`${
-              activeTab === 'resumen'
-                ? 'border-indigo-500 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-          >
-            Resumen
-          </button>
-          <button
-            onClick={() => setActiveTab('novedades')}
-            className={`${
-              activeTab === 'novedades'
-                ? 'border-indigo-500 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-          >
-            Novedades ({novedades.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('liquidaciones')}
-            className={`${
-              activeTab === 'liquidaciones'
-                ? 'border-indigo-500 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-          >
-            Liquidaciones ({entries.length})
-          </button>
-        </nav>
-      </div>
-
-      {/* Tab Content */}
-      {activeTab === 'resumen' && (
-        <div className="space-y-6">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <dt className="text-sm font-medium text-gray-500 truncate">Empleados Liquidados</dt>
-                <dd className="mt-1 text-3xl font-semibold text-gray-900">{entries.length}</dd>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <dt className="text-sm font-medium text-gray-500 truncate">Total Devengado</dt>
-                <dd className="mt-1 text-2xl font-semibold text-green-600">{formatCurrency(totalDevengado)}</dd>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <dt className="text-sm font-medium text-gray-500 truncate">Total Deducido</dt>
-                <dd className="mt-1 text-2xl font-semibold text-red-600">{formatCurrency(totalDeducido)}</dd>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <dt className="text-sm font-medium text-gray-500 truncate">Neto a Pagar</dt>
-                <dd className="mt-1 text-2xl font-semibold text-indigo-600">{formatCurrency(totalNeto)}</dd>
-              </div>
-            </div>
-          </div>
-
-          {/* Información del período */}
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-            <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">Información del Período</h3>
-            </div>
-            <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-              <dl className="sm:divide-y sm:divide-gray-200">
-                <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                  <dt className="text-sm font-medium text-gray-500">Tipo</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 capitalize">{period.tipo}</dd>
-                </div>
-                <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                  <dt className="text-sm font-medium text-gray-500">Novedades</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{novedades.length} registradas</dd>
-                </div>
-                {period.liquidatedAt && (
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">Liquidado</dt>
-                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {new Date(period.liquidatedAt).toLocaleString('es-CO')}
-                    </dd>
-                  </div>
-                )}
-                {period.approvedAt && (
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">Aprobado</dt>
-                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {new Date(period.approvedAt).toLocaleString('es-CO')}
-                    </dd>
-                  </div>
-                )}
-              </dl>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'novedades' && (
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-          <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">Novedades del Período</h3>
-            {period.estado === 'abierto' && (
-              <button
-                onClick={() => setShowAddNovedadModal(true)}
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-              >
-                Agregar Novedad
-              </button>
-            )}
-          </div>
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Empleado</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoría</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {novedades.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
-                    No hay novedades registradas
-                  </td>
-                </tr>
-              ) : (
-                novedades.map((novedad) => (
-                  <tr key={novedad.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {novedad.employee?.firstName} {novedad.employee?.lastName}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{novedad.tipo}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${novedad.categoria === 'devengo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                        {novedad.categoria}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(Number(novedad.valor))}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{novedad.cantidad}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {formatCurrency(Number(novedad.valor) * Number(novedad.cantidad))}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {activeTab === 'liquidaciones' && (
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-          <div className="px-4 py-5 sm:px-6">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">Liquidaciones del Período</h3>
-          </div>
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Empleado</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salario Base</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Devengado</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deducido</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Neto</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {entries.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
-                    {period.estado === 'abierto' ? 'El período aún no ha sido liquidado' : 'No hay liquidaciones'}
-                  </td>
-                </tr>
-              ) : (
-                entries.map((entry) => (
-                  <tr key={entry.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {entry.employee?.firstName} {entry.employee?.lastName}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatCurrency(Number(entry.salarioBase))}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{formatCurrency(Number(entry.totalDevengado))}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">{formatCurrency(Number(entry.totalDeducido))}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 font-semibold">{formatCurrency(Number(entry.neto))}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button className="text-indigo-600 hover:text-indigo-900">Ver detalle</button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
 
       {/* Add Novedad Modal */}
       {showAddNovedadModal && (

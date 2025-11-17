@@ -49,213 +49,204 @@ export default function PayrollPeriodsPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gestión de Nómina</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Administra períodos, novedades y liquidaciones de nómina
-          </p>
-        </div>
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Nuevo Período
-        </button>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Total Períodos</dt>
-                  <dd className="text-lg font-semibold text-gray-900">{stats.total}</dd>
-                </dl>
-              </div>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-white">💰 Gestión de Nómina</h1>
+            <p className="mt-2 text-slate-400">
+              Administra períodos, novedades y liquidaciones de nómina
+            </p>
           </div>
-        </div>
-
-        <div className="bg-white overflow-hidden shadow rounded-lg cursor-pointer hover:shadow-md transition-shadow" onClick={() => setFilter('abierto')}>
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="h-3 w-3 bg-blue-500 rounded-full"></div>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Abiertos</dt>
-                  <dd className="text-lg font-semibold text-blue-600">{stats.abiertos}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white overflow-hidden shadow rounded-lg cursor-pointer hover:shadow-md transition-shadow" onClick={() => setFilter('liquidado')}>
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="h-3 w-3 bg-yellow-500 rounded-full"></div>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Liquidados</dt>
-                  <dd className="text-lg font-semibold text-yellow-600">{stats.liquidados}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white overflow-hidden shadow rounded-lg cursor-pointer hover:shadow-md transition-shadow" onClick={() => setFilter('aprobado')}>
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <svg className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Aprobados</dt>
-                  <dd className="text-lg font-semibold text-green-600">{stats.aprobados}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white overflow-hidden shadow rounded-lg cursor-pointer hover:shadow-md transition-shadow" onClick={() => setFilter('cerrado')}>
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <svg className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Cerrados</dt>
-                  <dd className="text-lg font-semibold text-gray-600">{stats.cerrados}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filter Pills */}
-      {filter !== 'all' && (
-        <div className="mb-4 flex items-center gap-2">
-          <span className="text-sm text-gray-500">Filtro activo:</span>
-          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getEstadoBadgeColor(filter as any)}`}>
-            {getEstadoLabel(filter as any)}
-          </span>
           <button
-            onClick={() => setFilter('all')}
-            className="text-sm text-indigo-600 hover:text-indigo-800"
+            onClick={() => setShowCreateModal(true)}
+            className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg transition duration-200 shadow-lg hover:shadow-xl"
           >
-            Limpiar filtro
+            ➕ Nuevo Período
           </button>
         </div>
-      )}
 
-      {/* Table */}
-      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Período
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Tipo
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Fechas
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Estado
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Creado
-              </th>
-              <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {loading ? (
-              <tr>
-                <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
-                  Cargando...
-                </td>
-              </tr>
-            ) : filteredPeriods.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
-                  No hay períodos {filter !== 'all' ? `con estado "${getEstadoLabel(filter as any)}"` : 'registrados'}
-                </td>
-              </tr>
-            ) : (
-              filteredPeriods.map((period) => (
-                <tr 
-                  key={period.id} 
-                  className="hover:bg-gray-50 cursor-pointer"
-                  onClick={() => navigate(`/payroll/${period.id}`)}
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
-                      {period.descripcion || `Período ${period.id}`}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 capitalize">
-                      {period.tipo}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(period.fechaInicio).toLocaleDateString('es-CO')} - {new Date(period.fechaFin).toLocaleDateString('es-CO')}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getEstadoBadgeColor(period.estado)}`}>
-                      {getEstadoLabel(period.estado)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(period.createdAt).toLocaleDateString('es-CO')}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/payroll/${period.id}`);
-                      }}
-                      className="text-indigo-600 hover:text-indigo-900"
-                    >
-                      Ver detalles
-                    </button>
-                  </td>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div className="bg-gradient-to-br from-blue-800 to-blue-900 rounded-xl p-6 border border-blue-700 shadow-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-blue-300">Total Períodos</p>
+                <p className="text-3xl font-bold text-white mt-2">{stats.total}</p>
+              </div>
+              <span className="text-4xl">📋</span>
+            </div>
+          </div>
+
+          <button 
+            onClick={() => setFilter('abierto')}
+            className="group bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 shadow-xl hover:border-blue-500 transition-all duration-300 cursor-pointer transform hover:scale-105"
+          >
+            <div className="flex items-center justify-between">
+              <div className="text-left">
+                <p className="text-sm text-slate-400 group-hover:text-blue-400">Abiertos</p>
+                <p className="text-3xl font-bold text-blue-400 mt-2">{stats.abiertos}</p>
+              </div>
+              <div className="h-3 w-3 bg-blue-500 rounded-full"></div>
+            </div>
+          </button>
+
+          <button 
+            onClick={() => setFilter('liquidado')}
+            className="group bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 shadow-xl hover:border-yellow-500 transition-all duration-300 cursor-pointer transform hover:scale-105"
+          >
+            <div className="flex items-center justify-between">
+              <div className="text-left">
+                <p className="text-sm text-slate-400 group-hover:text-yellow-400">Liquidados</p>
+                <p className="text-3xl font-bold text-yellow-400 mt-2">{stats.liquidados}</p>
+              </div>
+              <div className="h-3 w-3 bg-yellow-500 rounded-full"></div>
+            </div>
+          </button>
+
+          <button 
+            onClick={() => setFilter('aprobado')}
+            className="group bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 shadow-xl hover:border-green-500 transition-all duration-300 cursor-pointer transform hover:scale-105"
+          >
+            <div className="flex items-center justify-between">
+              <div className="text-left">
+                <p className="text-sm text-slate-400 group-hover:text-green-400">Aprobados</p>
+                <p className="text-3xl font-bold text-green-400 mt-2">{stats.aprobados}</p>
+              </div>
+              <svg className="h-6 w-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            </div>
+          </button>
+
+          <button 
+            onClick={() => setFilter('cerrado')}
+            className="group bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 shadow-xl hover:border-slate-500 transition-all duration-300 cursor-pointer transform hover:scale-105"
+          >
+            <div className="flex items-center justify-between">
+              <div className="text-left">
+                <p className="text-sm text-slate-400 group-hover:text-slate-300">Cerrados</p>
+                <p className="text-3xl font-bold text-slate-300 mt-2">{stats.cerrados}</p>
+              </div>
+              <svg className="h-6 w-6 text-slate-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M13.414 7.414a2 2 0 00-2.828 0L9.172 9.586 7.07 7.485A2 2 0 104.242 9.657l2.101 2.101 1.414-1.414a2 2 0 012.828 0l4.829-4.829a1 1 0 00-1.414-1.414L13.414 7.414z" clipRule="evenodd" />
+              </svg>
+            </div>
+          </button>
+        </div>
+
+        {/* Filter Pills */}
+        {filter !== 'all' && (
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-slate-400">🔍 Filtro activo:</span>
+            <span className="px-4 py-2 bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded-full text-sm font-semibold">
+              {getEstadoLabel(filter as any)}
+            </span>
+            <button
+              onClick={() => setFilter('all')}
+              className="text-sm text-slate-400 hover:text-white transition"
+            >
+              ✕ Limpiar
+            </button>
+          </div>
+        )}
+
+        {/* Table */}
+        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 shadow-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-slate-700">
+              <thead className="bg-slate-900/50">
+                <tr>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                    Período
+                  </th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                    Tipo
+                  </th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                    Fechas
+                  </th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                    Estado
+                  </th>
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                    Creado
+                  </th>
+                  <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                    Acciones
+                  </th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              </thead>
+              <tbody className="divide-y divide-slate-700">
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-8 text-center">
+                      <div className="flex justify-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-4 border-slate-700 border-t-blue-500"></div>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredPeriods.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-8 text-center text-sm text-slate-400">
+                      No hay períodos {filter !== 'all' ? `con estado "${getEstadoLabel(filter as any)}"` : 'registrados'}
+                    </td>
+                  </tr>
+                ) : (
+                  filteredPeriods.map((period) => (
+                    <tr 
+                      key={period.id} 
+                      className="hover:bg-slate-700/50 transition duration-200 cursor-pointer"
+                      onClick={() => navigate(`/payroll/${period.id}`)}
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-semibold text-white">
+                          {period.descripcion || `Período ${period.id}`}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30 capitalize">
+                          {period.tipo}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                        {new Date(period.fechaInicio).toLocaleDateString('es-CO')} - {new Date(period.fechaFin).toLocaleDateString('es-CO')}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${
+                          period.estado === 'abierto'
+                            ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                            : period.estado === 'liquidado'
+                            ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+                            : period.estado === 'aprobado'
+                            ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                            : 'bg-slate-500/20 text-slate-400 border-slate-500/30'
+                        }`}>
+                          {getEstadoLabel(period.estado)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                        {new Date(period.createdAt).toLocaleDateString('es-CO')}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/payroll/${period.id}`);
+                          }}
+                          className="text-blue-400 hover:text-blue-300 transition"
+                        >
+                          👁️ Ver detalles
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       {/* Create Period Modal */}

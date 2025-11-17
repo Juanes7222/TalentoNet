@@ -32,49 +32,52 @@ export default function MarkAsPaidModal({ settlementId, onClose, onSuccess }: Ma
   };
 
   return (
-    <div className="fixed z-10 inset-0 overflow-y-auto">
+    <div className="fixed z-50 inset-0 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose} />
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
 
-        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <span className="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+        <div className="inline-block align-bottom bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-700">
           <form onSubmit={handleSubmit}>
-            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <div className="sm:flex sm:items-start">
-                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
-                  <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <div className="sm:flex sm:items-start gap-4">
+                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-purple-500/20 border border-purple-500/30 sm:mx-0 sm:h-10 sm:w-10">
+                  <svg className="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left flex-1">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                    Marcar como Pagada
+                <div className="mt-3 text-center sm:mt-0 sm:text-left flex-1">
+                  <h3 className="text-2xl leading-6 font-bold text-white mb-2">
+                    💳 Marcar como Pagada
                   </h3>
 
                   {error && (
-                    <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
-                      {error}
+                    <div className="mt-4 bg-red-950 border border-red-800 text-red-200 px-4 py-3 rounded-lg">
+                      ⚠️ {error}
                     </div>
                   )}
 
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500 mb-4">
+                  <div className="mt-4">
+                    <p className="text-sm text-slate-400 mb-4">
                       Confirme el pago de la liquidación proporcionando la referencia de la transacción.
                     </p>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Referencia de Pago <span className="text-red-500">*</span>
+                      <label htmlFor="referenciaPago" className="block text-sm font-semibold text-slate-300 mb-2">
+                        Referencia de Pago <span className="text-red-400">*</span>
                       </label>
                       <input
+                        id="referenciaPago"
                         type="text"
                         value={referenciaPago}
                         onChange={(e) => setReferenciaPago(e.target.value)}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
                         placeholder="Ej: TRF-2024-001234, CH-567890, etc."
                         required
                       />
-                      <p className="mt-1 text-xs text-gray-500">
-                        Número de transferencia, cheque, comprobante de pago, etc.
+                      <p className="mt-2 text-xs text-slate-400">
+                        💡 Número de transferencia, cheque, comprobante de pago, etc.
                       </p>
                     </div>
                   </div>
@@ -82,20 +85,21 @@ export default function MarkAsPaidModal({ settlementId, onClose, onSuccess }: Ma
               </div>
             </div>
 
-            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+            <div className="bg-slate-900/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-3 border-t border-slate-700">
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
+                className="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-slate-600 disabled:to-slate-700 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:w-auto sm:text-sm disabled:opacity-50 transition duration-200"
               >
-                {loading ? 'Guardando...' : 'Confirmar Pago'}
+                {loading ? '⏳ Guardando...' : '✓ Confirmar Pago'}
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                disabled={loading}
+                className="w-full inline-flex justify-center rounded-lg border border-slate-600 shadow-sm px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:w-auto sm:text-sm transition duration-200"
               >
-                Cancelar
+                ✕ Cancelar
               </button>
             </div>
           </form>

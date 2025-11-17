@@ -43,38 +43,38 @@ export default function CreatePeriodModal({ onClose, onSuccess }: CreatePeriodMo
   };
 
   return (
-    <div className="fixed z-10 inset-0 overflow-y-auto">
+    <div className="fixed z-50 inset-0 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose}></div>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
 
         <span className="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
-        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div className="inline-block align-bottom bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-700">
           <form onSubmit={handleSubmit}>
-            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
               <div className="sm:flex sm:items-start">
                 <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                    Crear Nuevo Período de Nómina
+                  <h3 className="text-2xl leading-6 font-bold text-white mb-6">
+                    ➕ Crear Nuevo Período de Nómina
                   </h3>
 
                   {error && (
-                    <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                      {error}
+                    <div className="mb-4 bg-red-950 border border-red-800 text-red-200 px-4 py-3 rounded-lg">
+                      ⚠️ {error}
                     </div>
                   )}
 
                   <div className="space-y-4">
                     {/* Tipo */}
                     <div>
-                      <label htmlFor="tipo" className="block text-sm font-medium text-gray-700">
+                      <label htmlFor="tipo" className="block text-sm font-semibold text-slate-300 mb-2">
                         Tipo de Período *
                       </label>
                       <select
                         id="tipo"
                         value={formData.tipo}
                         onChange={(e) => setFormData({ ...formData, tipo: e.target.value as 'quincenal' | 'mensual' })}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                       >
                         <option value="quincenal">Quincenal</option>
                         <option value="mensual">Mensual</option>
@@ -83,7 +83,7 @@ export default function CreatePeriodModal({ onClose, onSuccess }: CreatePeriodMo
 
                     {/* Fecha Inicio */}
                     <div>
-                      <label htmlFor="fechaInicio" className="block text-sm font-medium text-gray-700">
+                      <label htmlFor="fechaInicio" className="block text-sm font-semibold text-slate-300 mb-2">
                         Fecha Inicio *
                       </label>
                       <input
@@ -91,14 +91,14 @@ export default function CreatePeriodModal({ onClose, onSuccess }: CreatePeriodMo
                         id="fechaInicio"
                         value={formData.fechaInicio}
                         onChange={(e) => setFormData({ ...formData, fechaInicio: e.target.value })}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                         required
                       />
                     </div>
 
                     {/* Fecha Fin */}
                     <div>
-                      <label htmlFor="fechaFin" className="block text-sm font-medium text-gray-700">
+                      <label htmlFor="fechaFin" className="block text-sm font-semibold text-slate-300 mb-2">
                         Fecha Fin *
                       </label>
                       <input
@@ -106,14 +106,14 @@ export default function CreatePeriodModal({ onClose, onSuccess }: CreatePeriodMo
                         id="fechaFin"
                         value={formData.fechaFin}
                         onChange={(e) => setFormData({ ...formData, fechaFin: e.target.value })}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                         required
                       />
                     </div>
 
                     {/* Descripción */}
                     <div>
-                      <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700">
+                      <label htmlFor="descripcion" className="block text-sm font-semibold text-slate-300 mb-2">
                         Descripción
                       </label>
                       <input
@@ -122,7 +122,7 @@ export default function CreatePeriodModal({ onClose, onSuccess }: CreatePeriodMo
                         value={formData.descripcion}
                         onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
                         placeholder="Ej: Quincena noviembre 2024 - Primera quincena"
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                       />
                     </div>
                   </div>
@@ -130,21 +130,21 @@ export default function CreatePeriodModal({ onClose, onSuccess }: CreatePeriodMo
               </div>
             </div>
 
-            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <div className="bg-slate-900/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-3 border-t border-slate-700">
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
+                className="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-slate-600 disabled:to-slate-700 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm disabled:opacity-50 transition duration-200"
               >
-                {loading ? 'Creando...' : 'Crear Período'}
+                {loading ? '⏳ Creando...' : '✓ Crear Período'}
               </button>
               <button
                 type="button"
                 onClick={onClose}
                 disabled={loading}
-                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                className="w-full inline-flex justify-center rounded-lg border border-slate-600 shadow-sm px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:w-auto sm:text-sm transition duration-200"
               >
-                Cancelar
+                ✕ Cancelar
               </button>
             </div>
           </form>
