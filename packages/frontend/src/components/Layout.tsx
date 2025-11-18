@@ -48,7 +48,7 @@ export function Layout() {
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex lg:items-center lg:space-x-1">
+            <div className="hidden lg:flex lg:items-center lg:space-x-1 lg:flex-nowrap lg:overflow-x-auto lg:whitespace-nowrap lg:pr-4 hide-scrollbar">
               {navItems.map((item) => (
                 item.permission ? (
                   <PermissionGate key={item.path} permission={item.permission}>

@@ -76,3 +76,12 @@ code {
     @apply bg-blue-100 text-blue-800;
   }
 }
+
+/* Utility to hide scrollbars while keeping scroll functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
