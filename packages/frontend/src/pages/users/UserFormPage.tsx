@@ -32,7 +32,6 @@ export function UserFormPage() {
   const loadRoles = async () => {
     try {
       const data = await rolesService.findAll();
-      console.log('Roles cargados:', data);
       setRoles(data);
     } catch (error) {
       console.error('Error loading roles:', error);
@@ -42,7 +41,7 @@ export function UserFormPage() {
 
   const loadUser = async () => {
     if (!id) return;
-    
+
     try {
       const user = await usersService.findById(id);
       setFormData({
@@ -128,132 +127,134 @@ export function UserFormPage() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">
-          {isEdit ? 'Editar Usuario' : 'Crear Usuario'}
-        </h1>
-        <p className="text-gray-600 mt-1">
-          {isEdit
-            ? 'Modifica la información del usuario'
-            : 'Completa el formulario para crear un nuevo usuario'}
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
-        {/* Email */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Email <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="email"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-              errors.email ? 'border-red-500' : 'border-gray-300'
-            }`}
-            placeholder="usuario@empresa.com"
-          />
-          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
-        </div>
-
-        {/* Full Name */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Nombre Completo</label>
-          <input
-            type="text"
-            value={formData.fullName}
-            onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            placeholder="Juan Pérez"
-          />
-        </div>
-
-        {/* Identification Number */}
-        {!isEdit && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Número de Documento <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={formData.identificationNumber}
-              onChange={(e) => setFormData({ ...formData, identificationNumber: e.target.value })}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-                errors.identificationNumber ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="123456789"
-            />
-            {errors.identificationNumber && (
-              <p className="mt-1 text-sm text-red-600">{errors.identificationNumber}</p>
-            )}
-            <p className="mt-1 text-sm text-gray-500">
-              Se usará como contraseña inicial. El usuario puede cambiarla después.
-            </p>
-          </div>
-        )}
-
-        {/* Employee ID */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">ID de Empleado</label>
-          <input
-            type="text"
-            value={formData.employeeId}
-            onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            placeholder="EMP001"
-          />
-          <p className="mt-1 text-sm text-gray-500">
-            Opcional: vincula este usuario con un empleado existente
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-white">
+            {isEdit ? 'Editar Usuario' : 'Crear Usuario'}
+          </h1>
+          <p className="text-slate-400 mt-1">
+            {isEdit
+              ? 'Modifica la información del usuario'
+              : 'Completa el formulario para crear un nuevo usuario'}
           </p>
         </div>
 
-        {/* Roles */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Roles <span className="text-red-500">*</span>
-          </label>
-          <div className="space-y-2">
-            {roles.map((role) => (
-              <label
-                key={role.id}
-                className="flex items-start p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  checked={formData.roleIds.includes(role.id)}
-                  onChange={() => toggleRole(role.id)}
-                  className="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                />
-                <div className="ml-3">
-                  <div className="text-sm font-medium text-gray-900">{role.name}</div>
-                  <div className="text-sm text-gray-500">{role.description}</div>
-                </div>
-              </label>
-            ))}
+        <form onSubmit={handleSubmit} className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl shadow-xl p-6 space-y-6">
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Email <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className={`w-full px-4 py-3 bg-slate-700 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.email ? 'border-red-500' : 'border-slate-600'
+              }`}
+              placeholder="usuario@empresa.com"
+            />
+            {errors.email && <p className="mt-1 text-sm text-red-300">{errors.email}</p>}
           </div>
-          {errors.roleIds && <p className="mt-1 text-sm text-red-600">{errors.roleIds}</p>}
-        </div>
 
-        {/* Actions */}
-        <div className="flex justify-end gap-3 pt-4 border-t">
-          <button
-            type="button"
-            onClick={() => navigate('/users')}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Guardando...' : isEdit ? 'Actualizar' : 'Crear Usuario'}
-          </button>
-        </div>
-      </form>
+          {/* Full Name */}
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Nombre Completo</label>
+            <input
+              type="text"
+              value={formData.fullName}
+              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+              className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Juan Pérez"
+            />
+          </div>
+
+          {/* Identification Number */}
+          {!isEdit && (
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Número de Documento <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={formData.identificationNumber}
+                onChange={(e) => setFormData({ ...formData, identificationNumber: e.target.value })}
+                className={`w-full px-4 py-3 bg-slate-700 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.identificationNumber ? 'border-red-500' : 'border-slate-600'
+                }`}
+                placeholder="123456789"
+              />
+              {errors.identificationNumber && (
+                <p className="mt-1 text-sm text-red-300">{errors.identificationNumber}</p>
+              )}
+              <p className="mt-1 text-sm text-slate-400">
+                Se usará como contraseña inicial. El usuario puede cambiarla después.
+              </p>
+            </div>
+          )}
+
+          {/* Employee ID */}
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">ID de Empleado</label>
+            <input
+              type="text"
+              value={formData.employeeId}
+              onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
+              className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="EMP001"
+            />
+            <p className="mt-1 text-sm text-slate-400">
+              Opcional: vincula este usuario con un empleado existente
+            </p>
+          </div>
+
+          {/* Roles */}
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Roles <span className="text-red-400">*</span>
+            </label>
+            <div className="space-y-3">
+              {roles.map((role) => (
+                <label
+                  key={role.id}
+                  className="flex items-start p-3 bg-slate-800 border border-slate-700 rounded-lg hover:bg-slate-700/50 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={formData.roleIds.includes(role.id)}
+                    onChange={() => toggleRole(role.id)}
+                    className="mt-1 h-4 w-4 text-blue-500 bg-slate-700 border-slate-600 rounded focus:ring-blue-500"
+                  />
+                  <div className="ml-3">
+                    <div className="text-sm font-medium text-white">{role.name}</div>
+                    <div className="text-sm text-slate-400">{role.description}</div>
+                  </div>
+                </label>
+              ))}
+            </div>
+            {errors.roleIds && <p className="mt-1 text-sm text-red-300">{errors.roleIds}</p>}
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-slate-700">
+            <button
+              type="button"
+              onClick={() => navigate('/users')}
+              className="px-4 py-2 border border-slate-600 rounded-lg text-slate-300 hover:bg-slate-700"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Guardando...' : isEdit ? 'Actualizar' : 'Crear Usuario'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

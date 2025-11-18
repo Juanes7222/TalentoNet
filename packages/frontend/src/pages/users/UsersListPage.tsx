@@ -88,10 +88,10 @@ export function UsersListPage() {
 
   const getStatusBadge = (status: UserStatus) => {
     const styles = {
-      [UserStatus.ACTIVE]: 'bg-green-100 text-green-800',
-      [UserStatus.INACTIVE]: 'bg-gray-100 text-gray-800',
-      [UserStatus.SUSPENDED]: 'bg-red-100 text-red-800',
-      [UserStatus.PENDING_INVITATION]: 'bg-yellow-100 text-yellow-800',
+      [UserStatus.ACTIVE]: 'bg-green-600/10 text-green-300 border border-green-700/20',
+      [UserStatus.INACTIVE]: 'bg-slate-700 text-slate-200 border border-slate-700/20',
+      [UserStatus.SUSPENDED]: 'bg-red-700/10 text-red-300 border border-red-700/20',
+      [UserStatus.PENDING_INVITATION]: 'bg-yellow-700/10 text-yellow-300 border border-yellow-700/20',
     };
 
     const labels = {
@@ -109,243 +109,197 @@ export function UsersListPage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="max-w-7xl mx-auto flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gestión de Usuarios</h1>
-          <p className="text-gray-600 mt-1">Administra usuarios, roles y permisos</p>
+          <h1 className="text-3xl font-bold text-white">Gestión de Usuarios</h1>
+          <p className="text-slate-400 mt-1">Administra usuarios, roles y permisos</p>
         </div>
         <PermissionGate permission="users.create">
           <Link
             to="/users/new"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition"
           >
             + Nuevo Usuario
           </Link>
         </PermissionGate>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <input
-            type="text"
-            placeholder="Buscar por email..."
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            value={filters.email || ''}
-            onChange={(e) => setFilters({ ...filters, email: e.target.value, page: 1 })}
-          />
-          
-          <select
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            value={filters.status || ''}
-            onChange={(e) => setFilters({ ...filters, status: e.target.value as UserStatus, page: 1 })}
-          >
-            <option value="">Todos los estados</option>
-            <option value={UserStatus.ACTIVE}>Activo</option>
-            <option value={UserStatus.INACTIVE}>Inactivo</option>
-            <option value={UserStatus.SUSPENDED}>Suspendido</option>
-            <option value={UserStatus.PENDING_INVITATION}>Pendiente</option>
-          </select>
+      <div className="max-w-7xl mx-auto">
+        {/* Filters */}
+        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl shadow-xl p-4 mb-6 border border-slate-700">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <input
+              type="text"
+              placeholder="Buscar por email..."
+              className="px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={filters.email || ''}
+              onChange={(e) => setFilters({ ...filters, email: e.target.value, page: 1 })}
+            />
 
-          <select
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            value={filters.roleId || ''}
-            onChange={(e) => setFilters({ ...filters, roleId: e.target.value, page: 1 })}
-          >
-            <option value="">Todos los roles</option>
-            {roles.map((role) => (
-              <option key={role.id} value={role.id}>
-                {role.name}
-              </option>
-            ))}
-          </select>
+            <select
+              className="px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={filters.status || ''}
+              onChange={(e) => setFilters({ ...filters, status: e.target.value as UserStatus, page: 1 })}
+            >
+              <option value="">Todos los estados</option>
+              <option value={UserStatus.ACTIVE}>Activo</option>
+              <option value={UserStatus.INACTIVE}>Inactivo</option>
+              <option value={UserStatus.SUSPENDED}>Suspendido</option>
+              <option value={UserStatus.PENDING_INVITATION}>Pendiente</option>
+            </select>
 
-          <button
-            onClick={() => setFilters({ page: 1, limit: 10 })}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-          >
-            Limpiar Filtros
-          </button>
-        </div>
-      </div>
+            <select
+              className="px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={filters.roleId || ''}
+              onChange={(e) => setFilters({ ...filters, roleId: e.target.value, page: 1 })}
+            >
+              <option value="">Todos los roles</option>
+              {roles.map((role) => (
+                <option key={role.id} value={role.id}>
+                  {role.name}
+                </option>
+              ))}
+            </select>
 
-      {/* Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        {loading ? (
-          <div className="p-12 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <button
+              onClick={() => setFilters({ page: 1, limit: 10 })}
+              className="px-4 py-3 border border-slate-700 rounded-lg text-slate-300 hover:bg-slate-700"
+            >
+              Limpiar Filtros
+            </button>
           </div>
-        ) : (
-          <>
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Usuario
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Roles
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Estado
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Último Login
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {users.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{user.email}</div>
-                        {user.fullName && (
-                          <div className="text-sm text-gray-500">{user.fullName}</div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-1">
-                        {user.roles && user.roles.length > 0 ? (
-                          user.roles.map((role) => (
-                            <span
-                              key={role.id}
-                              className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded"
-                            >
-                              {role.name}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="text-sm text-gray-400">Sin roles</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(user.status)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {user.lastLogin
-                        ? new Date(user.lastLogin).toLocaleDateString('es-ES')
-                        : 'Nunca'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => navigate(`/users/${user.id}`)}
-                          className="text-blue-600 hover:text-blue-900"
-                        >
-                          Ver
-                        </button>
-                        
-                        <PermissionGate permission="users.update">
-                          <button
-                            onClick={() => navigate(`/users/${user.id}/edit`)}
-                            className="text-indigo-600 hover:text-indigo-900"
-                          >
-                            Editar
-                          </button>
-                        </PermissionGate>
+        </div>
 
-                        <PermissionGate permission="users.invite">
-                          {user.status === UserStatus.PENDING_INVITATION && (
-                            <button
-                              onClick={() => handleSendInvitation(user.id)}
-                              className="text-green-600 hover:text-green-900"
-                            >
-                              Invitar
-                            </button>
-                          )}
-                        </PermissionGate>
-
-                        <PermissionGate permission="users.suspend">
-                          {user.status === UserStatus.ACTIVE && (
-                            <button
-                              onClick={() => handleSuspend(user.id)}
-                              className="text-yellow-600 hover:text-yellow-900"
-                            >
-                              Suspender
-                            </button>
-                          )}
-                          {user.status === UserStatus.SUSPENDED && (
-                            <button
-                              onClick={() => handleActivate(user.id)}
-                              className="text-green-600 hover:text-green-900"
-                            >
-                              Activar
-                            </button>
-                          )}
-                        </PermissionGate>
-
-                        <PermissionGate permission="users.delete">
-                          <button
-                            onClick={() => handleDelete(user.id)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            Eliminar
-                          </button>
-                        </PermissionGate>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-                <div className="flex-1 flex justify-between sm:hidden">
-                  <button
-                    onClick={() => setFilters({ ...filters, page: (filters.page || 1) - 1 })}
-                    disabled={filters.page === 1}
-                    className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-                  >
-                    Anterior
-                  </button>
-                  <button
-                    onClick={() => setFilters({ ...filters, page: (filters.page || 1) + 1 })}
-                    disabled={filters.page === totalPages}
-                    className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-                  >
-                    Siguiente
-                  </button>
-                </div>
-                <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-sm text-gray-700">
-                      Mostrando <span className="font-medium">{(filters.page! - 1) * filters.limit! + 1}</span> a{' '}
-                      <span className="font-medium">
-                        {Math.min(filters.page! * filters.limit!, total)}
-                      </span>{' '}
-                      de <span className="font-medium">{total}</span> resultados
-                    </p>
-                  </div>
-                  <div>
-                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <button
-                          key={page}
-                          onClick={() => setFilters({ ...filters, page })}
-                          className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                            page === filters.page
-                              ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                              : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                          }`}
-                        >
-                          {page}
-                        </button>
-                      ))}
-                    </nav>
-                  </div>
-                </div>
+        {/* Table */}
+        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl shadow-xl overflow-hidden border border-slate-700">
+          {loading ? (
+            <div className="p-12 text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-700 border-t-blue-500 mx-auto"></div>
+            </div>
+          ) : (
+            <>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-slate-700">
+                  <thead className="bg-slate-900/50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Usuario</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Roles</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Estado</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">Último Login</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-slate-300 uppercase tracking-wider">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-700 bg-slate-900/10">
+                    {users.map((user) => (
+                      <tr key={user.id} className="hover:bg-slate-700/50 transition">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm font-medium text-white">{user.email}</div>
+                            {user.fullName && (
+                              <div className="text-sm text-slate-400">{user.fullName}</div>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-wrap gap-1">
+                            {user.roles && user.roles.length > 0 ? (
+                              user.roles.map((role) => (
+                                <span key={role.id} className="px-2 py-1 text-xs font-medium bg-slate-700 text-slate-200 rounded">
+                                  {role.name}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-sm text-slate-400">Sin roles</span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">{getStatusBadge(user.status)}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                          {user.lastLogin
+                            ? new Date(user.lastLogin).toLocaleDateString('es-ES')
+                            : 'Nunca'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <div className="flex justify-end gap-3 items-center">
+                            <button onClick={() => navigate(`/users/${user.id}`)} className="text-slate-300 hover:text-white">Ver</button>
+                            <PermissionGate permission="users.update">
+                              <button onClick={() => navigate(`/users/${user.id}/edit`)} className="text-slate-300 hover:text-white">Editar</button>
+                            </PermissionGate>
+                            <PermissionGate permission="users.invite">
+                              {user.status === UserStatus.PENDING_INVITATION && (
+                                <button onClick={() => handleSendInvitation(user.id)} className="text-amber-400 hover:text-amber-300">Invitar</button>
+                              )}
+                            </PermissionGate>
+                            <PermissionGate permission="users.suspend">
+                              {user.status === UserStatus.ACTIVE && (
+                                <button onClick={() => handleSuspend(user.id)} className="text-yellow-400 hover:text-yellow-300">Suspender</button>
+                              )}
+                              {user.status === UserStatus.SUSPENDED && (
+                                <button onClick={() => handleActivate(user.id)} className="text-green-400 hover:text-green-300">Activar</button>
+                              )}
+                            </PermissionGate>
+                            <PermissionGate permission="users.delete">
+                              <button onClick={() => handleDelete(user.id)} className="text-red-400 hover:text-red-300">Eliminar</button>
+                            </PermissionGate>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            )}
-          </>
-        )}
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="bg-slate-900/60 px-4 py-3 flex items-center justify-between border-t border-slate-700 sm:px-6">
+                  <div className="flex-1 flex justify-between sm:hidden">
+                    <button
+                      onClick={() => setFilters({ ...filters, page: (filters.page || 1) - 1 })}
+                      disabled={filters.page === 1}
+                      className="relative inline-flex items-center px-4 py-2 border border-slate-700 text-sm font-medium rounded-md text-slate-300 bg-slate-800 hover:bg-slate-700 disabled:opacity-50"
+                    >
+                      Anterior
+                    </button>
+                    <button
+                      onClick={() => setFilters({ ...filters, page: (filters.page || 1) + 1 })}
+                      disabled={filters.page === totalPages}
+                      className="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-700 text-sm font-medium rounded-md text-slate-300 bg-slate-800 hover:bg-slate-700 disabled:opacity-50"
+                    >
+                      Siguiente
+                    </button>
+                  </div>
+                  <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm text-slate-400">
+                        Página {filters.page} de {totalPages} — {total} usuarios
+                      </p>
+                    </div>
+                    <div>
+                      <nav className="relative z-0 inline-flex -space-x-px" aria-label="Pagination">
+                        <button
+                          onClick={() => setFilters({ ...filters, page: (filters.page || 1) - 1 })}
+                          disabled={filters.page === 1}
+                          className="relative inline-flex items-center px-3 py-2 rounded-l-md border border-slate-700 bg-slate-800 text-sm font-medium text-slate-300 hover:bg-slate-700 disabled:opacity-50"
+                        >
+                          Anterior
+                        </button>
+                        <button
+                          onClick={() => setFilters({ ...filters, page: (filters.page || 1) + 1 })}
+                          disabled={filters.page === totalPages}
+                          className="relative inline-flex items-center px-3 py-2 rounded-r-md border border-slate-700 bg-slate-800 text-sm font-medium text-slate-300 hover:bg-slate-700 disabled:opacity-50"
+                        >
+                          Siguiente
+                        </button>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
