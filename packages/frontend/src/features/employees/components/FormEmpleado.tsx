@@ -229,15 +229,20 @@ export default function FormEmpleado({ employeeId, initialData }: FormEmpleadoPr
 
       {/* Sección de Contrato (solo al crear) */}
       {!isEditing && (
-        <div className="card">
-          <h2 className="text-xl font-semibold mb-4">Información del Contrato</h2>
+        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-8 border border-slate-700 shadow-xl">
+          <h2 className="text-2xl font-bold text-white mb-6 pb-4 border-b border-slate-700">
+            💼 Información del Contrato
+          </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-300 mb-2">
                 Tipo de Contrato *
               </label>
-              <select {...register('contract.contractType')} className="input">
+              <select 
+                {...register('contract.contractType')} 
+                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              >
                 <option value="">Seleccione...</option>
                 <option value="indefinido">Indefinido</option>
                 <option value="fijo">Fijo</option>
@@ -245,57 +250,76 @@ export default function FormEmpleado({ employeeId, initialData }: FormEmpleadoPr
                 <option value="prestacion_servicios">Prestación de Servicios</option>
               </select>
               {!isEditing && (errors as any).contract?.contractType && (
-                <p className="mt-1 text-sm text-red-600">{(errors as any).contract.contractType.message}</p>
+                <p className="mt-2 text-sm text-red-400">{(errors as any).contract.contractType.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cargo *</label>
-              <input type="text" {...register('contract.position')} className="input" />
+              <label className="block text-sm font-medium text-slate-300 mb-2">Cargo *</label>
+              <input 
+                type="text" 
+                {...register('contract.position')} 
+                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                placeholder="Ej: Desarrollador Senior"
+              />
               {!isEditing && (errors as any).contract?.position && (
-                <p className="mt-1 text-sm text-red-600">{(errors as any).contract.position.message}</p>
+                <p className="mt-2 text-sm text-red-400">{(errors as any).contract.position.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Departamento *</label>
-              <input type="text" {...register('contract.department')} className="input" />
+              <label className="block text-sm font-medium text-slate-300 mb-2">Departamento *</label>
+              <input 
+                type="text" 
+                {...register('contract.department')} 
+                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                placeholder="Ej: Tecnología"
+              />
               {!isEditing && (errors as any).contract?.department && (
-                <p className="mt-1 text-sm text-red-600">{(errors as any).contract.department.message}</p>
+                <p className="mt-2 text-sm text-red-400">{(errors as any).contract.department.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Salario *</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Salario *</label>
               <input 
                 type="number" 
                 {...register('contract.salary', { valueAsNumber: true })} 
-                className="input"
+                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                 step="1000"
                 min="0"
+                placeholder="0"
               />
               {!isEditing && (errors as any).contract?.salary && (
-                <p className="mt-1 text-sm text-red-600">{(errors as any).contract.salary.message}</p>
+                <p className="mt-2 text-sm text-red-400">{(errors as any).contract.salary.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-300 mb-2">
                 Fecha de Inicio del Contrato *
               </label>
-              <input type="date" {...register('contract.startDate')} className="input" />
+              <input 
+                type="date" 
+                {...register('contract.startDate')} 
+                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
               {!isEditing && (errors as any).contract?.startDate && (
-                <p className="mt-1 text-sm text-red-600">{(errors as any).contract.startDate.message}</p>
+                <p className="mt-2 text-sm text-red-400">{(errors as any).contract.startDate.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-300 mb-2">
                 Fecha de Fin (solo contratos fijos)
               </label>
-              <input type="date" {...register('contract.endDate')} className="input" />
+              <input 
+                type="date" 
+                {...register('contract.endDate')} 
+                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
               {!isEditing && (errors as any).contract?.endDate && (
-                <p className="mt-1 text-sm text-red-600">{(errors as any).contract.endDate.message}</p>
+                <p className="mt-2 text-sm text-red-400">{(errors as any).contract.endDate.message}</p>
               )}
             </div>
           </div>
