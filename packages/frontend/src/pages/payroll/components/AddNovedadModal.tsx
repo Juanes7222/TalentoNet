@@ -108,7 +108,9 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
           <form onSubmit={handleSubmit}>
             <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl leading-6 font-bold text-white">➕ Agregar Novedad</h3>
+                <h3 className="text-2xl leading-6 font-bold text-white flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"/></svg>
+                  Agregar Novedad</h3>
                 <button
                   type="button"
                   onClick={onClose}
@@ -161,7 +163,9 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
                         onChange={(e) => setFormData({ ...formData, categoria: e.target.value as 'devengo', tipo: '' })}
                         className="w-4 h-4 bg-slate-700 border-slate-600 text-green-600 focus:ring-green-500"
                       />
-                      <span className="ml-2 text-sm text-slate-300">📈 Devengo</span>
+                      <span className="ml-2 text-sm text-slate-300 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2"><path stroke-linejoin="round" d="m21 6l-5.293 5.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 0-1.414 0L7 14"/><path d="M3 3v14.8c0 1.12 0 1.68.218 2.108a2 2 0 0 0 .874.874C4.52 21 5.08 21 6.2 21H21"/></g></svg>
+                        Devengo</span>
                     </label>
                     <label className="inline-flex items-center">
                       <input
@@ -171,7 +175,9 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
                         onChange={(e) => setFormData({ ...formData, categoria: e.target.value as 'deduccion', tipo: '' })}
                         className="w-4 h-4 bg-slate-700 border-slate-600 text-red-600 focus:ring-red-500"
                       />
-                      <span className="ml-2 text-sm text-slate-300">📉 Deducción</span>
+                      <span className="ml-2 text-sm text-slate-300 flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="1.5"><path d="M22 22H12c-4.714 0-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12V2" opacity="0.5"/><path d="m19 15l-3.118-3.926c-.477-.602-.716-.903-.99-1.05a1.5 1.5 0 0 0-1.357-.029c-.28.135-.531.425-1.035 1.005s-.755.87-1.035 1.005a1.5 1.5 0 0 1-1.356-.03c-.274-.146-.513-.447-.99-1.048L6 7"/></g></svg>
+                        Deducción</span>
                     </label>
                   </div>
                 </div>
@@ -234,8 +240,9 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
                     step="0.01"
                   />
                   {errors.cantidad && <p className="mt-1 text-sm text-red-400">⚠️ {errors.cantidad}</p>}
-                  <p className="mt-2 text-xs text-slate-400">
-                    💰 Total: ${(Number(formData.valor) * Number(formData.cantidad)).toLocaleString('es-CO', { minimumFractionDigits: 2 })}
+                  <p className="mt-2 text-xs text-slate-400 flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 2048 2048"><path fill="currentColor" d="M1792 384h-128V256H475l768 768l-768 768h1189v-128h128v256H256v-91l805-805l-805-805v-91h1536z"/></svg>
+                    Total: ${(Number(formData.valor) * Number(formData.cantidad)).toLocaleString('es-CO', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
 

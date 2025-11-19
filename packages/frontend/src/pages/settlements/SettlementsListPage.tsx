@@ -58,7 +58,9 @@ export default function SettlementsListPage() {
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-4xl font-bold text-white">📋 Liquidaciones de Contratos</h1>
+          <h1 className="text-4xl font-bold text-white flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Liquidaciones de Contratos</h1>
           <p className="mt-2 text-slate-400">
             Gestión de liquidaciones definitivas con prestaciones sociales
           </p>
@@ -72,7 +74,9 @@ export default function SettlementsListPage() {
                 <p className="text-sm text-blue-300">Total Liquidaciones</p>
                 <p className="text-3xl font-bold text-white mt-2">{stats.total}</p>
               </div>
-              <span className="text-4xl">📋</span>
+              <span className="text-4xl">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-white" viewBox="0 0 1024 1024" fill="currentColor" > <path d="M768 0H416c-35.344 0-64 28.656-64 64h352v256h256v512H736v64h224c35.344 0 64-28.656 64-64V256.016zm0 256V90.496L933.472 256zM64 128c-35.344 0-64 28.656-64 64v768c0 35.344 28.656 64 64 64h544c35.344 0 64-28.656 64-64V384.016L416 128zm544 832H64V192h288v256h256zM416 384V218.496L581.472 384z"/> </svg>
+              </span>
             </div>
           </div>
 
@@ -82,7 +86,9 @@ export default function SettlementsListPage() {
                 <p className="text-sm text-slate-400">Borradores</p>
                 <p className="text-3xl font-bold text-slate-300 mt-2">{stats.borradores}</p>
               </div>
-              <span className="text-4xl">📝</span>
+              <span className="text-4xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill="#fff" d="m16.24 3.56l4.95 4.94c.78.79.78 2.05 0 2.84L12 20.53a4.01 4.01 0 0 1-5.66 0L2.81 17c-.78-.79-.78-2.05 0-2.84l10.6-10.6c.79-.78 2.05-.78 2.83 0M4.22 15.58l3.54 3.53c.78.79 2.04.79 2.83 0l3.53-3.53l-4.95-4.95z"/></svg>
+              </span>
             </div>
           </div>
 
@@ -92,7 +98,9 @@ export default function SettlementsListPage() {
                 <p className="text-sm text-yellow-300">Pendientes</p>
                 <p className="text-3xl font-bold text-yellow-400 mt-2">{stats.pendientes}</p>
               </div>
-              <span className="text-4xl">⏳</span>
+              <span className="text-4xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><g fill="#fff"><path d="M13 6h-2v1a1 1 0 1 0 2 0z"/><path fill-rule="evenodd" d="M6 2v2h1v3a5 5 0 0 0 5 5a5 5 0 0 0-5 5v3H6v2h12v-2h-1v-3a5 5 0 0 0-5-5a5 5 0 0 0 5-5V4h1V2zm3 2h6v3a3 3 0 1 1-6 0zm0 13v3h6v-3a3 3 0 1 0-6 0" clip-rule="evenodd"/></g></svg>
+              </span>
             </div>
           </div>
 
@@ -102,7 +110,9 @@ export default function SettlementsListPage() {
                 <p className="text-sm text-green-300">Aprobados</p>
                 <p className="text-3xl font-bold text-green-400 mt-2">{stats.aprobados}</p>
               </div>
-              <span className="text-4xl">✓</span>
+              <span className="text-4xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill="#fff" d="M9 18.25a.74.74 0 0 1-.53-.25l-5-5a.75.75 0 1 1 1.06-1L9 16.44L19.47 6a.75.75 0 0 1 1.06 1l-11 11a.74.74 0 0 1-.53.25"/></svg>
+              </span>
             </div>
           </div>
 
@@ -112,7 +122,9 @@ export default function SettlementsListPage() {
                 <p className="text-sm text-purple-300">Total Monto</p>
                 <p className="text-2xl font-bold text-purple-400 mt-2">{formatCurrency(stats.totalMonto)}</p>
               </div>
-              <span className="text-4xl">💰</span>
+              <span className="text-4xl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 16 16"><path fill="none" stroke="#fff" stroke-linejoin="round" stroke-miterlimit="10" d="M6 10h2.5c.55 0 1-.45 1-1s-.45-1-1-1h-1c-.55 0-1-.45-1-1s.45-1 1-1H10M8 4.5v1.167M8 9.5v2M14.5 8a6.5 6.5 0 1 1-13 0a6.5 6.5 0 0 1 13 0Z" stroke-width="1"/></svg>
+              </span>
             </div>
           </div>
         </div>
@@ -132,43 +144,47 @@ export default function SettlementsListPage() {
             </button>
             <button
               onClick={() => setFilter('borrador')}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
+              className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 flex items-center gap-1 ${
                 filter === 'borrador'
                   ? 'bg-gradient-to-r from-slate-600 to-slate-700 text-white shadow-lg'
                   : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
               }`}
             >
-              📝 Borradores ({stats.borradores})
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#fff" d="m16.24 3.56l4.95 4.94c.78.79.78 2.05 0 2.84L12 20.53a4.01 4.01 0 0 1-5.66 0L2.81 17c-.78-.79-.78-2.05 0-2.84l10.6-10.6c.79-.78 2.05-.78 2.83 0M4.22 15.58l3.54 3.53c.78.79 2.04.79 2.83 0l3.53-3.53l-4.95-4.95z"/></svg>
+              Borradores ({stats.borradores})
             </button>
             <button
               onClick={() => setFilter('pendiente_aprobacion')}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
+              className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 flex items-center gap-1 ${
                 filter === 'pendiente_aprobacion'
                   ? 'bg-gradient-to-r from-yellow-600 to-yellow-700 text-white shadow-lg'
                   : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
               }`}
             >
-              ⏳ Pendientes ({stats.pendientes})
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><g fill="#fff"><path d="M13 6h-2v1a1 1 0 1 0 2 0z"/><path fill-rule="evenodd" d="M6 2v2h1v3a5 5 0 0 0 5 5a5 5 0 0 0-5 5v3H6v2h12v-2h-1v-3a5 5 0 0 0-5-5a5 5 0 0 0 5-5V4h1V2zm3 2h6v3a3 3 0 1 1-6 0zm0 13v3h6v-3a3 3 0 1 0-6 0" clip-rule="evenodd"/></g></svg>
+              Pendientes ({stats.pendientes})
             </button>
             <button
               onClick={() => setFilter('aprobado')}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
+              className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 flex items-center gap-1 ${
                 filter === 'aprobado'
                   ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg'
                   : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
               }`}
             >
-              ✓ Aprobados ({stats.aprobados})
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#fff" d="M9 18.25a.74.74 0 0 1-.53-.25l-5-5a.75.75 0 1 1 1.06-1L9 16.44L19.47 6a.75.75 0 0 1 1.06 1l-11 11a.74.74 0 0 1-.53.25"/></svg>
+              Aprobados ({stats.aprobados})
             </button>
             <button
               onClick={() => setFilter('pagado')}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
+              className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 flex items-center gap-1 ${
                 filter === 'pagado'
                   ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg'
                   : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
               }`}
             >
-              💳 Pagados ({stats.pagados})
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256"><path fill="#fff" d="M224 48H32a16 16 0 0 0-16 16v128a16 16 0 0 0 16 16h192a16 16 0 0 0 16-16V64a16 16 0 0 0-16-16m0 16v24H32V64Zm0 128H32v-88h192zm-16-24a8 8 0 0 1-8 8h-32a8 8 0 0 1 0-16h32a8 8 0 0 1 8 8m-64 0a8 8 0 0 1-8 8h-16a8 8 0 0 1 0-16h16a8 8 0 0 1 8 8"/></svg>
+              Pagados ({stats.pagados})
             </button>
           </div>
         </div>
