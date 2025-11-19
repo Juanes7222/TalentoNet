@@ -76,8 +76,9 @@ export default function VacancyEditPage() {
   if (!vacancy) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-8">
-        <div className="bg-red-950 border border-red-800 text-red-200 px-4 py-3 rounded-lg">
-          ⚠️ Vacante no encontrada
+        <div className="bg-red-950 border border-red-800 text-red-200 px-4 py-3 rounded-lg flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+          <span>Vacante no encontrada</span>
         </div>
       </div>
     );
@@ -87,7 +88,10 @@ export default function VacancyEditPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-white">✏️ Editar Vacante</h1>
+          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M3 21v-4.25L16.2 3.575q.3-.275.663-.425t.762-.15t.775.15t.65.45L20.425 5q.3.275.438.65T21 6.4q0 .4-.137.763t-.438.662L7.25 21zM17.6 7.8L19 6.4L17.6 5l-1.4 1.4z"/></svg>
+            Editar Vacante
+          </h1>
           <p className="text-slate-400 mt-2">Modifique la información de la vacante</p>
         </div>
 
@@ -264,29 +268,42 @@ export default function VacancyEditPage() {
           <div className="flex gap-4 pt-4 border-t border-slate-700">
             <button
               type="submit"
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg transition duration-200 shadow-lg hover:shadow-xl disabled:from-slate-600 disabled:to-slate-700 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg transition duration-200 shadow-lg hover:shadow-xl disabled:from-slate-600 disabled:to-slate-700 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
               disabled={updateVacancy.isPending}
             >
-              {updateVacancy.isPending ? '⏳ Guardando...' : '✓ Guardar Cambios'}
+              {updateVacancy.isPending ? (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v4m0 8v4m8-8h-4M4 12H0"/></svg>
+                  Guardando...
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21q-1.875 0-3.512-.712t-2.85-1.925t-1.925-2.85T3 12t.713-3.512t1.924-2.85t2.85-1.925T12 3q2.05 0 3.888.875T19 6.35V4h2v6h-6V8h2.75q-1.025-1.4-2.525-2.2T12 5Q9.075 5 7.038 7.038T5 12t2.038 4.963T12 19q2.625 0 4.588-1.7T18.9 13h2.05q-.375 3.425-2.937 5.713T12 21m2.8-4.8L11 12.4V7h2v4.6l3.2 3.2z"/></svg>
+                  Guardar Cambios
+                </>
+              )}
             </button>
             <button
               type="button"
               onClick={() => navigate(`/recruitment/vacancies/${id}`)}
-              className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg transition duration-200 shadow-lg"
+              className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg transition duration-200 shadow-lg inline-flex items-center justify-center gap-2"
             >
-              ✕ Cancelar
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
+              Cancelar
             </button>
           </div>
 
           {updateVacancy.isError && (
-            <div className="bg-red-950 border border-red-800 text-red-200 px-4 py-3 rounded-lg">
-              ⚠️ Error al actualizar la vacante. Por favor intente nuevamente.
+            <div className="bg-red-950 border border-red-800 text-red-200 px-4 py-3 rounded-lg flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+              <span>Error al actualizar la vacante. Por favor intente nuevamente.</span>
             </div>
           )}
 
           {updateVacancy.isSuccess && (
-            <div className="bg-green-950 border border-green-800 text-green-200 px-4 py-3 rounded-lg">
-              ✓ Vacante actualizada exitosamente
+            <div className="bg-green-950 border border-green-800 text-green-200 px-4 py-3 rounded-lg flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21q-1.875 0-3.512-.712t-2.85-1.925t-1.925-2.85T3 12t.713-3.512t1.924-2.85t2.85-1.925T12 3q2.05 0 3.888.875T19 6.35V4h2v6h-6V8h2.75q-1.025-1.4-2.525-2.2T12 5Q9.075 5 7.038 7.038T5 12t2.038 4.963T12 19q2.625 0 4.588-1.7T18.9 13h2.05q-.375 3.425-2.937 5.713T12 21m2.8-4.8L11 12.4V7h2v4.6l3.2 3.2z"/></svg>
+              <span>Vacante actualizada exitosamente</span>
             </div>
           )}
         </form>

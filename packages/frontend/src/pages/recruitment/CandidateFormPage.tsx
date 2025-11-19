@@ -47,7 +47,10 @@ export default function CandidateFormPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-white">➕ Nuevo Candidato</h1>
+          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"/></svg>
+            Nuevo Candidato
+          </h1>
           <p className="text-slate-400 mt-2">Complete la información del candidato</p>
         </div>
 
