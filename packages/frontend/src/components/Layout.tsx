@@ -40,7 +40,7 @@ export function Layout() {
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center gap-3">
               <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg">
-                <span className="text-white font-bold text-lg">T</span>
+                <span className="text-white font-bold text-lg">TN</span>
               </div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
                 TalentoNet

@@ -109,9 +109,9 @@ export default function AffiliationDetailPage() {
               {affiliation.estado === AffiliationStatus.ACTIVO && (
                 <button
                   onClick={() => setShowRetireModal(true)}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition duration-200"
-                >
-                  🗑️ Retirar Afiliación
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition duration-200 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-7 4h10"/></svg>
+                  Retirar Afiliación
                 </button>
               )}
             </div>
@@ -123,8 +123,9 @@ export default function AffiliationDetailPage() {
           <div className="md:col-span-2 space-y-6">
             {/* Información principal */}
             <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-8 border border-slate-700 shadow-xl">
-              <h2 className="text-2xl font-bold text-white mb-6 pb-4 border-b border-slate-700">
-                ℹ️ Información General
+              <h2 className="text-2xl font-bold text-white mb-6 pb-4 border-b border-slate-700 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/> <line x1="12" y1="16" x2="12" y2="12"/> <line x1="12" y1="8" x2="12" y2="8"/></svg>
+                Información General
               </h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="bg-slate-900/50 p-4 rounded-lg">
@@ -168,21 +169,18 @@ export default function AffiliationDetailPage() {
 
             {/* Comprobante */}
             <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-8 border border-slate-700 shadow-xl">
-              <h2 className="text-2xl font-bold text-white mb-6 pb-4 border-b border-slate-700">
-                📄 Comprobante
+              <h2 className="text-2xl font-bold text-white mb-6 pb-4 border-b border-slate-700 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 8h16"/></svg>
+                Comprobante
               </h2>
               {affiliation.comprobanteFilename ? (
                 <div className="space-y-4">
                   <div className="bg-slate-900/50 p-4 rounded-lg">
                     <p className="font-semibold text-white mb-2">📄 {affiliation.comprobanteFilename}</p>
                     {affiliation.comprobanteUrl && (
-                      <a
-                        href={affiliation.comprobanteUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-400 hover:text-blue-300 text-sm font-medium transition"
-                      >
-                        👁️ Ver documento
+                      <a href={affiliation.comprobanteUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 text-sm font-medium transition flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7s-8.268-2.943-9.542-7z"/></svg>
+                        Ver documento
                       </a>
                     )}
                   </div>
@@ -214,8 +212,10 @@ export default function AffiliationDetailPage() {
 
             {/* Historial */}
             <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-8 border border-slate-700 shadow-xl">
-              <h2 className="text-2xl font-bold text-white mb-6 pb-4 border-b border-slate-700">
-                📊 Historial de Cambios
+              <h2 className="text-2xl font-bold text-white mb-6 pb-4 border-b border-slate-700 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 13h2v8H3zm4-8h2v16H7zm4-2h2v18h-2zm4 4h2v14h-2zm4-4h2v18h-2z"/></svg>
+                  Historial de Cambios
               </h2>
               {logs && logs.length > 0 ? (
                 <div className="space-y-4">
@@ -232,8 +232,9 @@ export default function AffiliationDetailPage() {
                       </div>
                       {log.detalle && <p className="text-sm text-slate-300 mt-2">{log.detalle}</p>}
                       {log.usuario && (
-                        <p className="text-xs text-slate-500 mt-2">
-                          👤 Por: {log.usuario.email}
+                        <p className="text-xs text-slate-500 mt-2 flex items-center gap-1">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21h13a2.5 2.5 0 0 0-2.5-2.5h-8a2.5 2.5 0 0 0-2.5 2.5z"/> </svg>
+                          Por: {log.usuario.email}
                         </p>
                       )}
                     </div>
@@ -249,7 +250,10 @@ export default function AffiliationDetailPage() {
           <div className="space-y-6">
             {/* Info Card */}
             <div className="bg-gradient-to-br from-blue-800 to-blue-900 rounded-xl p-6 border border-blue-700 shadow-xl">
-              <h3 className="text-lg font-bold text-white mb-4">📌 Resumen</h3>
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 20 20"><path fill="currentColor" d="M18 7.121V13a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11.879l-1 1H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.121zM4 8.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m0 3a.5.5 0 0 1 .5-.5H9a.5.5 0 0 1 0 1H4.5a.5.5 0 0 1-.5-.5m13.854-6.354a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708l6-6a.5.5 0 0 1 .708 0"/></svg>
+                Resumen
+              </h3>
               <div className="space-y-3 text-sm">
                 <div>
                   <p className="text-blue-200">Número Afiliación</p>
@@ -274,7 +278,9 @@ export default function AffiliationDetailPage() {
         {showRetireModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-8 border border-slate-700 shadow-2xl max-w-md w-full">
-              <h3 className="text-2xl font-bold text-white mb-6">🗑️ Retirar Afiliación</h3>
+              <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-7 4h10"/></svg>
+                Retirar Afiliación</h3>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-semibold text-slate-300 mb-2">
