@@ -51,11 +51,11 @@ export default function FormEmpleado({ employeeId, initialData }: FormEmpleadoPr
       
       // Mostrar mensaje más amigable para errores de conflicto
       if (error?.response?.status === 409) {
-        alert(`❌ Conflicto: ${errorMessage}`);
+        alert(`Conflicto: ${errorMessage}`);
       } else if (error?.response?.status === 400) {
-        alert(`❌ Datos inválidos: ${errorMessage}`);
+        alert(`Datos inválidos: ${errorMessage}`);
       } else {
-        alert(`❌ Error: ${errorMessage}`);
+        alert(`Error: ${errorMessage}`);
       }
     }
   };
@@ -63,8 +63,9 @@ export default function FormEmpleado({ employeeId, initialData }: FormEmpleadoPr
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-8 border border-slate-700 shadow-xl">
-        <h2 className="text-2xl font-bold text-white mb-6 pb-4 border-b border-slate-700">
-          📋 Información Personal
+        <h2 className="text-2xl font-bold text-white mb-6 pb-4 border-b border-slate-700 flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+          Información Personal
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -230,8 +231,9 @@ export default function FormEmpleado({ employeeId, initialData }: FormEmpleadoPr
       {/* Sección de Contrato (solo al crear) */}
       {!isEditing && (
         <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-8 border border-slate-700 shadow-xl">
-          <h2 className="text-2xl font-bold text-white mb-6 pb-4 border-b border-slate-700">
-            💼 Información del Contrato
+          <h2 className="text-2xl font-bold text-white mb-6 pb-4 border-b border-slate-700 flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-slate-200" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Información del Contrato
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -330,16 +332,32 @@ export default function FormEmpleado({ employeeId, initialData }: FormEmpleadoPr
         <button
           type="button"
           onClick={() => navigate('/employees')}
-          className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg transition duration-200 shadow-lg"
+          className="px-6 py-3 inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg transition duration-200 shadow-lg"
         >
-          ✕ Cancelar
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
+          Cancelar
         </button>
         <button 
           type="submit" 
           disabled={isSubmitting} 
-          className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-slate-600 disabled:to-slate-700 text-white font-semibold rounded-lg transition duration-200 shadow-lg hover:shadow-xl disabled:shadow-none disabled:cursor-not-allowed"
+          className="px-6 py-3 inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-slate-600 disabled:to-slate-700 text-white font-semibold rounded-lg transition duration-200 shadow-lg hover:shadow-xl disabled:shadow-none disabled:cursor-not-allowed"
         >
-          {isSubmitting ? 'Guardando...' : isEditing ? '✓ Actualizar' : '✓ Crear Empleado'}
+          {isSubmitting ? (
+            <>
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v4m0 8v4m8-8h-4M4 12H8"/></svg>
+              Guardando...
+            </>
+          ) : isEditing ? (
+            <>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21q-1.875 0-3.512-.712t-2.85-1.925t-1.925-2.85T3 12t.713-3.512t1.924-2.85t2.85-1.925T12 3q2.05 0 3.888.875T19 6.35V4h2v6h-6V8h2.75q-1.025-1.4-2.525-2.2T12 5Q9.075 5 7.038 7.038T5 12t2.038 4.963T12 19q2.625 0 4.588-1.7T18.9 13h2.05q-.375 3.425-2.937 5.713T12 21m2.8-4.8L11 12.4V7h2v4.6l3.2 3.2z"/></svg>
+              Actualizar
+            </>
+          ) : (
+            <>
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"/></svg>
+              Crear Empleado
+            </>
+          )}
         </button>
       </div>
     </form>
