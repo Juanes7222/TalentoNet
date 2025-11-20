@@ -54,8 +54,9 @@ export default function CreatePeriodModal({ onClose, onSuccess }: CreatePeriodMo
             <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
               <div className="sm:flex sm:items-start">
                 <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                  <h3 className="text-2xl leading-6 font-bold text-white mb-6">
-                    ➕ Crear Nuevo Período de Nómina
+                  <h3 className="text-2xl leading-6 font-bold text-white mb-6 flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"/></svg>
+                    Crear Nuevo Período de Nómina
                   </h3>
 
                   {error && (

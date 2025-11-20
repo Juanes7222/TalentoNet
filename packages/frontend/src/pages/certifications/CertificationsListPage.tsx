@@ -83,7 +83,9 @@ export default function CertificationsListPage() {
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-white">📄 Certificaciones Laborales</h1>
+            <h1 className="text-3xl font-bold text-white flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 32 32"><path fill="#fff" d="m25 10l1.593 3l3.407.414l-2.5 2.253L28 19l-3-1.875L22 19l.5-3.333l-2.5-2.253L23.5 13zm-3 20h-2v-5a5.006 5.006 0 0 0-5-5H9a5.006 5.006 0 0 0-5 5v5H2v-5a7.01 7.01 0 0 1 7-7h6a7.01 7.01 0 0 1 7 7zM12 4a5 5 0 1 1-5 5a5 5 0 0 1 5-5m0-2a7 7 0 1 0 7 7a7 7 0 0 0-7-7"/></svg>
+              Certificaciones Laborales</h1>
             <p className="text-slate-400 mt-2">Gestión de solicitudes de certificaciones</p>
           </div>
           <button
@@ -172,11 +174,11 @@ export default function CertificationsListPage() {
                             cert.estado === CertificationStatus.PENDIENTE) && (
                             <button
                               onClick={() => handleGeneratePdf(cert.id)}
-                              className="text-blue-400 hover:text-blue-300"
+                              className="text-blue-400 hover:text-blue-300 flex items-center justify-center"
                               disabled={generatePdf.isPending}
                               title="Generar PDF"
                             >
-                              📄
+                              <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 20 20"><path fill="#fff" fill-rule="evenodd" d="M5.8 14H5v1h.8c.3 0 .5-.2.5-.5s-.2-.5-.5-.5M11 2H3v16h13V7zM7.2 14.6c0 .8-.6 1.4-1.4 1.4H5v1H4v-4h1.8c.8 0 1.4.6 1.4 1.4zm4.1.5c0 1-.8 1.9-1.9 1.9H8v-4h1.4c1 0 1.9.8 1.9 1.9zM15 14h-2v1h1.5v1H13v1h-1v-4h3zm0-2H4V3h7v4h4zm-5.6 2H9v2h.4c.6 0 1-.4 1-1s-.5-1-1-1" clip-rule="evenodd"/></svg>
                             </button>
                           )}
 
@@ -197,10 +199,10 @@ export default function CertificationsListPage() {
 
                           <button
                             onClick={() => navigate(`/certifications/${cert.id}`)}
-                            className="text-slate-300 hover:text-white"
+                            className="text-slate-300 hover:text-white flex items-center justify-center"
                             title="Ver detalles"
                           >
-                            👁️
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                           </button>
                         </div>
                       </td>
