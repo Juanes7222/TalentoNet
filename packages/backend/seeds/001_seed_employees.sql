@@ -7,6 +7,8 @@ DECLARE
     role_admin_id UUID;
     role_rh_id UUID;
     role_employee_id UUID;
+    admin_user_id UUID;
+    rh_user_id UUID;
     user_ids UUID[];
     employee_ids UUID[];
     i INTEGER;
@@ -17,12 +19,20 @@ BEGIN
     SELECT id INTO role_employee_id FROM roles WHERE name = 'employee';
 
     -- Usuario admin
-    INSERT INTO users (email, password_hash, role_id) VALUES
-    ('admin@talentonet.com', '$2b$10$Vp2PY0aLL/qW01ksf5ZP1eULtdQkIt6OS0blvfvjMnQp/kkAuLri6', role_admin_id);
+    INSERT INTO users (id, email, password_hash, status) 
+    VALUES (uuid_generate_v4(), 'admin@talentonet.com', '$2b$10$Vp2PY0aLL/qW01ksf5ZP1eULtdQkIt6OS0blvfvjMnQp/kkAuLri6', 'ACTIVE')
+    RETURNING id INTO admin_user_id;
+    
+    -- Asignar rol admin
+    INSERT INTO user_roles (user_id, role_id) VALUES (admin_user_id, role_admin_id);
 
     -- Usuario RH
-    INSERT INTO users (email, password_hash, role_id) VALUES
-    ('rh@talentonet.com', '$2b$10$Vp2PY0aLL/qW01ksf5ZP1eULtdQkIt6OS0blvfvjMnQp/kkAuLri6', role_rh_id);
+    INSERT INTO users (id, email, password_hash, status) 
+    VALUES (uuid_generate_v4(), 'rh@talentonet.com', '$2b$10$Vp2PY0aLL/qW01ksf5ZP1eULtdQkIt6OS0blvfvjMnQp/kkAuLri6', 'ACTIVE')
+    RETURNING id INTO rh_user_id;
+    
+    -- Asignar rol rh
+    INSERT INTO user_roles (user_id, role_id) VALUES (rh_user_id, role_rh_id);
 
     -- Crear 30 empleados con usuarios
     FOR i IN 1..30 LOOP
@@ -39,13 +49,16 @@ BEGIN
             base_salary := 1300000 + (i * 150000); -- Salarios entre 1.3M y 5.8M
 
             -- Insertar usuario
-            INSERT INTO users (id, email, password_hash, role_id)
+            INSERT INTO users (id, email, password_hash, status)
             VALUES (
                 new_user_id,
                 'empleado' || i || '@talentonet.com',
                 '$2b$10$rH8Q3Z9X1Y2W3E4R5T6Y7u8I9O0P1Q2W3E4R5T6Y7U8I9O0P1Q2W3',
-                role_employee_id
+                'ACTIVE'
             );
+            
+            -- Asignar rol employee
+            INSERT INTO user_roles (user_id, role_id) VALUES (new_user_id, role_employee_id);
 
             -- Insertar empleado
             INSERT INTO employees (
