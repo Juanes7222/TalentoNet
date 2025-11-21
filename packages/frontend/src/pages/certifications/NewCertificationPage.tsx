@@ -1,13 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateCertification } from '../../hooks/useCertifications';
 import { useEmployees } from '../../features/employees/hooks';
 import { RequesterType } from '../../types/certifications';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function NewCertificationPage() {
   const navigate = useNavigate();
   const createCertification = useCreateCertification();
-  const { data: employeesData } = useEmployees({});
+  const { user } = useAuth();
+  const [currentEmployeeInfo, setCurrentEmployeeInfo] = useState<any>(null);
+  const [isLoadingEmployee, setIsLoadingEmployee] = useState(false);
+
+  // Verificar si el usuario es empleado (no admin ni rrhh)
+  const isEmployee = user?.roles?.some(role => role.name === 'employee') && 
+                     !user?.roles?.some(role => role.name === 'admin' || role.name === 'rrhh');
+  
+  // Solo cargar empleados si NO es empleado (es admin o rrhh)
+  const { data: employeesData } = useEmployees({}, { enabled: !isEmployee && !!user });
 
   const [formData, setFormData] = useState({
     requesterNombre: '',
@@ -22,6 +32,39 @@ export default function NewCertificationPage() {
     consentimientoDatos: false,
   });
 
+  // Cargar información del empleado si el usuario es empleado
+  useEffect(() => {
+    const loadEmployeeInfo = async () => {
+      if (isEmployee && user) {
+        setIsLoadingEmployee(true);
+        try {
+          const response = await fetch('/api/v1/employees/me', {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            },
+          });
+          const employeeData = await response.json();
+          setCurrentEmployeeInfo(employeeData);
+          
+          // Auto-completar el formulario con los datos del empleado
+          setFormData(prev => ({
+            ...prev,
+            requesterNombre: user.fullName || '',
+            requesterEmail: user.email || '',
+            requesterTipo: RequesterType.EMPLEADO,
+            employeeId: employeeData.id,
+          }));
+        } catch (error) {
+          console.error('Error al cargar información del empleado:', error);
+        } finally {
+          setIsLoadingEmployee(false);
+        }
+      }
+    };
+
+    loadEmployeeInfo();
+  }, [isEmployee, user]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -34,9 +77,10 @@ export default function NewCertificationPage() {
       await createCertification.mutateAsync(formData);
       alert('Certificación solicitada exitosamente');
       navigate('/certifications');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al solicitar certificación:', error);
-      alert('Error al crear la solicitud');
+      const errorMessage = error?.response?.data?.message || 'Error al crear la solicitud';
+      alert(errorMessage);
     }
   };
 
@@ -45,7 +89,7 @@ export default function NewCertificationPage() {
       <div className="max-w-3xl mx-auto space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 16 16"><path fill="#fff" fill-rule="evenodd" d="M3.5 1.5v13h5.75a.75.75 0 0 1 0 1.5H3a1 1 0 0 1-1-1V1a1 1 0 0 1 1-1h6.644a1 1 0 0 1 .72.305l3.355 3.476a1 1 0 0 1 .281.695V6.25a.75.75 0 0 1-1.5 0V6H9.75A1.75 1.75 0 0 1 8 4.25V1.5zm6 .07l2.828 2.93H9.75a.25.25 0 0 1-.25-.25zM13 15a.75.75 0 0 1-.75-.75v-1.5h-1.5a.75.75 0 0 1 0-1.5h1.5v-1.5a.75.75 0 0 1 1.5 0v1.5h1.5a.75.75 0 0 1 0 1.5h-1.5v1.5A.75.75 0 0 1 13 15" clip-rule="evenodd"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 16 16"><path fill="#fff" fillRule="evenodd" d="M3.5 1.5v13h5.75a.75.75 0 0 1 0 1.5H3a1 1 0 0 1-1-1V1a1 1 0 0 1 1-1h6.644a1 1 0 0 1 .72.305l3.355 3.476a1 1 0 0 1 .281.695V6.25a.75.75 0 0 1-1.5 0V6H9.75A1.75 1.75 0 0 1 8 4.25V1.5zm6 .07l2.828 2.93H9.75a.25.25 0 0 1-.25-.25zM13 15a.75.75 0 0 1-.75-.75v-1.5h-1.5a.75.75 0 0 1 0-1.5h1.5v-1.5a.75.75 0 0 1 1.5 0v1.5h1.5a.75.75 0 0 1 0 1.5h-1.5v1.5A.75.75 0 0 1 13 15" clipRule="evenodd"/></svg>
             Nueva Certificación Laboral</h1>
           <p className="mt-2 text-slate-400">Complete el formulario para solicitar una certificación</p>
         </div>
@@ -71,9 +115,10 @@ export default function NewCertificationPage() {
               </label>
               <input
                 type="email"
-                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full px-4 py-3 ${isEmployee ? 'bg-slate-600 border-slate-500' : 'bg-slate-700 border-slate-600'} border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500`}
                 value={formData.requesterEmail}
                 onChange={(e) => setFormData({ ...formData, requesterEmail: e.target.value })}
+                readOnly={isEmployee}
                 required
               />
             </div>
@@ -81,19 +126,42 @@ export default function NewCertificationPage() {
 
           <div>
             <label className="block text-sm font-semibold text-slate-300 mb-2">Empleado *</label>
-            <select
-              className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={formData.employeeId}
-              onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
-              required
-            >
-              <option value="">Seleccione un empleado</option>
-              {employeesData?.data.map((emp) => (
-                <option key={emp.id} value={emp.id}>
-                  {emp.firstName} {emp.lastName} - {emp.identificationNumber}
-                </option>
-              ))}
-            </select>
+            {isEmployee && currentEmployeeInfo ? (
+              <div className="w-full px-4 py-3 bg-slate-600 border border-slate-500 rounded-lg text-white">
+                <div className="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <div>
+                    <div className="font-semibold">
+                      {currentEmployeeInfo.firstName} {currentEmployeeInfo.lastName}
+                    </div>
+                    <div className="text-sm text-slate-300">
+                      {currentEmployeeInfo.identificationNumber}
+                    </div>
+                  </div>
+                  <div className="ml-auto">
+                    <span className="px-3 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full border border-blue-500/30">
+                      Tu perfil
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <select
+                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={formData.employeeId}
+                onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
+                required
+              >
+                <option value="">Seleccione un empleado</option>
+                {employeesData?.data.map((emp) => (
+                  <option key={emp.id} value={emp.id}>
+                    {emp.firstName} {emp.lastName} - {emp.identificationNumber}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           <div>

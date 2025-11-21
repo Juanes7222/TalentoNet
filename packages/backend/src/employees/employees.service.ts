@@ -217,6 +217,19 @@ export class EmployeesService {
     return employee;
   }
 
+  async findByUserId(userId: string): Promise<Employee> {
+    const employee = await this.employeesRepository.findOne({
+      where: { userId },
+      relations: ['user', 'contracts', 'affiliations'],
+    });
+
+    if (!employee) {
+      throw new NotFoundException(`No se encontró un empleado asociado al usuario`);
+    }
+
+    return employee;
+  }
+
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto): Promise<Employee> {
     const employee = await this.findOne(id);
 

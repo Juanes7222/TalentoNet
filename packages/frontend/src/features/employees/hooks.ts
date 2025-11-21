@@ -2,19 +2,25 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { employeesApi } from './api';
 import type { EmployeeFormData } from './types';
 
-export const useEmployees = (params?: {
-  search?: string;
-  status?: string;
-  city?: string;
-  department?: string;
-  page?: number;
-  limit?: number;
-}) => {
+export const useEmployees = (
+  params?: {
+    search?: string;
+    status?: string;
+    city?: string;
+    department?: string;
+    page?: number;
+    limit?: number;
+  },
+  options?: {
+    enabled?: boolean;
+  },
+) => {
   return useQuery({
     queryKey: ['employees', params],
     queryFn: () => employeesApi.getAll(params),
     placeholderData: (previousData) => previousData,
     staleTime: 1000,
+    ...options,
   });
 };
 

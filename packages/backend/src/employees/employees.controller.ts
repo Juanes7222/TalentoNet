@@ -13,6 +13,7 @@ import {
   Logger,
   UsePipes,
   ValidationPipe,
+  Request,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { EmployeesService } from './employees.service';
@@ -54,6 +55,17 @@ export class EmployeesController {
   async findAll(@Query() filters: EmployeeFilterDto) {
     this.logger.log(`Consultando empleados con filtros: ${JSON.stringify(filters)}`);
     return this.employeesService.findAll(filters);
+  }
+
+  @Get('me')
+  @Roles('employee', 'admin', 'rh')
+  @ApiOperation({ summary: 'Obtener información del empleado autenticado' })
+  @ApiResponse({ status: 200, description: 'Información del empleado', type: EmployeeResponseDto })
+  @ApiResponse({ status: 404, description: 'Empleado no encontrado' })
+  async getMyInfo(@Request() req: any) {
+    const userId = req.user.userId;
+    this.logger.log(`Empleado obteniendo su propia información. User ID: ${userId}`);
+    return this.employeesService.findByUserId(userId);
   }
 
   @Get(':id')

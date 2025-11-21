@@ -107,6 +107,7 @@ FROM roles r
 CROSS JOIN permissions p
 WHERE r.name = 'employee'
   AND p.name IN (
+    'certifications.create',
     'certifications.read',
     'documents.read'
   );

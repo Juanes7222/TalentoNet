@@ -7,6 +7,7 @@ import {
   useUpdateCertificationStatus,
 } from '../../hooks/useCertifications';
 import { CertificationStatus } from '../../types/certifications';
+import { useAuth } from '../../contexts/AuthContext';
 
 const statusLabels: Record<CertificationStatus, string> = {
   [CertificationStatus.PENDIENTE]: 'Pendiente',
@@ -27,6 +28,7 @@ const badgeStyles: Record<string, string> = {
 
 export default function CertificationsListPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [statusFilter, setStatusFilter] = useState<CertificationStatus | ''>('');
   const { data: certifications, isLoading } = useCertifications(
     statusFilter ? { estado: statusFilter } : undefined,
@@ -34,6 +36,10 @@ export default function CertificationsListPage() {
   const generatePdf = useGeneratePdf();
   const downloadPdf = useDownloadPdf();
   const updateStatus = useUpdateCertificationStatus();
+
+  // Verificar si el usuario es empleado (no admin ni rrhh)
+  const isEmployee = user?.roles?.some(role => role.name === 'employee') && 
+                     !user?.roles?.some(role => role.name === 'admin' || role.name === 'rrhh');
 
   const handleGeneratePdf = async (id: string) => {
     try {
@@ -159,18 +165,18 @@ export default function CertificationsListPage() {
                         {new Date(cert.createdAt).toLocaleDateString('es-CO')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <div className="flex gap-3 items-center">
-                          {cert.estado === CertificationStatus.PENDIENTE && (
+                        <div className="flex gap-2 items-center">
+                          {!isEmployee && cert.estado === CertificationStatus.PENDIENTE && (
                             <button
                               onClick={() => handleApprove(cert.id)}
                               className="text-green-400 hover:text-green-300"
                               title="Aprobar"
                             >
-                              ✓
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m9.55 15.15l8.475-8.475q.3-.3.7-.3t.7.3t.3.713t-.3.712l-9.175 9.2q-.3.3-.7.3t-.7-.3L4.55 13q-.3-.3-.288-.712t.313-.713t.713-.3t.712.3z"/></svg>
                             </button>
                           )}
 
-                          {(cert.estado === CertificationStatus.APROBADO ||
+                          {!isEmployee && (cert.estado === CertificationStatus.APROBADO ||
                             cert.estado === CertificationStatus.PENDIENTE) && (
                             <button
                               onClick={() => handleGeneratePdf(cert.id)}
@@ -178,7 +184,7 @@ export default function CertificationsListPage() {
                               disabled={generatePdf.isPending}
                               title="Generar PDF"
                             >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 20 20"><path fill="#fff" fill-rule="evenodd" d="M5.8 14H5v1h.8c.3 0 .5-.2.5-.5s-.2-.5-.5-.5M11 2H3v16h13V7zM7.2 14.6c0 .8-.6 1.4-1.4 1.4H5v1H4v-4h1.8c.8 0 1.4.6 1.4 1.4zm4.1.5c0 1-.8 1.9-1.9 1.9H8v-4h1.4c1 0 1.9.8 1.9 1.9zM15 14h-2v1h1.5v1H13v1h-1v-4h3zm0-2H4V3h7v4h4zm-5.6 2H9v2h.4c.6 0 1-.4 1-1s-.5-1-1-1" clip-rule="evenodd"/></svg>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 20 20"><path fill="#fff" fillRule="evenodd" d="M5.8 14H5v1h.8c.3 0 .5-.2.5-.5s-.2-.5-.5-.5M11 2H3v16h13V7zM7.2 14.6c0 .8-.6 1.4-1.4 1.4H5v1H4v-4h1.8c.8 0 1.4.6 1.4 1.4zm4.1.5c0 1-.8 1.9-1.9 1.9H8v-4h1.4c1 0 1.9.8 1.9 1.9zM15 14h-2v1h1.5v1H13v1h-1v-4h3zm0-2H4V3h7v4h4zm-5.6 2H9v2h.4c.6 0 1-.4 1-1s-.5-1-1-1" clipRule="evenodd"/></svg>
                             </button>
                           )}
 
@@ -193,17 +199,11 @@ export default function CertificationsListPage() {
                               className="text-purple-400 hover:text-purple-300"
                               title="Descargar PDF"
                             >
-                              ⬇
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m12 16l-5-5l1.4-1.45l2.6 2.6V4h2v8.15l2.6-2.6L17 11zm-6 4q-.825 0-1.412-.587T4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413T18 20z"/></svg>
                             </button>
                           )}
 
-                          <button
-                            onClick={() => navigate(`/certifications/${cert.id}`)}
-                            className="text-slate-300 hover:text-white flex items-center justify-center"
-                            title="Ver detalles"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                          </button>
+                          
                         </div>
                       </td>
                     </tr>
