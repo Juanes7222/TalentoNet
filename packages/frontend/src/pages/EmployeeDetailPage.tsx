@@ -10,6 +10,13 @@ export function EmployeeDetailPage() {
   const deleteEmployee = useDeleteEmployee();
   const [showSettlementModal, setShowSettlementModal] = useState(false);
 
+  // Extraer datos de relaciones
+  const email = employee?.user?.email;
+  const currentContract = employee?.contracts?.find(c => c.isCurrent);
+  const position = currentContract?.position;
+  const salary = currentContract?.salary ? parseFloat(currentContract.salary) : undefined;
+  const workDepartment = currentContract?.department;
+
   const handleDelete = async () => {
     if (window.confirm('¿Está seguro de desactivar este empleado?')) {
       try {
@@ -79,14 +86,6 @@ export function EmployeeDetailPage() {
           <h2 className="text-2xl font-bold text-white mb-6 pb-4 border-b border-slate-700">Información Personal</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-slate-900/50 p-4 rounded-lg">
-              <p className="text-sm text-slate-500 mb-1">Tipo de Identificación</p>
-              <p className="font-semibold text-white">{employee.identificationType}</p>
-            </div>
-            <div className="bg-slate-900/50 p-4 rounded-lg">
-              <p className="text-sm text-slate-500 mb-1">Número de Identificación</p>
-              <p className="font-semibold text-white">{employee.identificationNumber}</p>
-            </div>
-            <div className="bg-slate-900/50 p-4 rounded-lg">
               <p className="text-sm text-slate-500 mb-1">Nombres</p>
               <p className="font-semibold text-white">{employee.firstName}</p>
             </div>
@@ -95,13 +94,17 @@ export function EmployeeDetailPage() {
               <p className="font-semibold text-white">{employee.lastName}</p>
             </div>
             <div className="bg-slate-900/50 p-4 rounded-lg">
-              <p className="text-sm text-slate-500 mb-1">Fecha de Nacimiento</p>
-              <p className="font-semibold text-white">{employee.dateOfBirth || 'N/A'}</p>
+              <p className="text-sm text-slate-500 mb-1">Tipo de Identificación</p>
+              <p className="font-semibold text-white">{employee.identificationType}</p>
             </div>
-            {employee.gender && (
+            <div className="bg-slate-900/50 p-4 rounded-lg">
+              <p className="text-sm text-slate-500 mb-1">Número de Identificación</p>
+              <p className="font-semibold text-white">{employee.identificationNumber}</p>
+            </div>
+            {email && (
               <div className="bg-slate-900/50 p-4 rounded-lg">
-                <p className="text-sm text-slate-500 mb-1">Género</p>
-                <p className="font-semibold text-white">{employee.gender}</p>
+                <p className="text-sm text-slate-500 mb-1">Correo Electrónico</p>
+                <p className="font-semibold text-blue-400">{email}</p>
               </div>
             )}
             {employee.phone && (
@@ -110,8 +113,20 @@ export function EmployeeDetailPage() {
                 <p className="font-semibold text-white">{employee.phone}</p>
               </div>
             )}
-            {employee.address && (
+            <div className="bg-slate-900/50 p-4 rounded-lg">
+              <p className="text-sm text-slate-500 mb-1">Fecha de Nacimiento</p>
+              <p className="font-semibold text-white">
+                {employee.dateOfBirth ? new Date(employee.dateOfBirth).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}
+              </p>
+            </div>
+            {employee.gender && (
               <div className="bg-slate-900/50 p-4 rounded-lg">
+                <p className="text-sm text-slate-500 mb-1">Género</p>
+                <p className="font-semibold text-white">{employee.gender === 'M' ? 'Masculino' : employee.gender === 'F' ? 'Femenino' : employee.gender}</p>
+              </div>
+            )}
+            {employee.address && (
+              <div className="bg-slate-900/50 p-4 rounded-lg col-span-2">
                 <p className="text-sm text-slate-500 mb-1">Dirección</p>
                 <p className="font-semibold text-white">{employee.address}</p>
               </div>
@@ -124,7 +139,7 @@ export function EmployeeDetailPage() {
             )}
             {employee.department && (
               <div className="bg-slate-900/50 p-4 rounded-lg">
-                <p className="text-sm text-slate-500 mb-1">Departamento</p>
+                <p className="text-sm text-slate-500 mb-1">Departamento (Región)</p>
                 <p className="font-semibold text-white">{employee.department}</p>
               </div>
             )}
@@ -143,29 +158,39 @@ export function EmployeeDetailPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-slate-900/50 p-4 rounded-lg">
               <p className="text-sm text-slate-500 mb-1">Cargo</p>
-              <p className="font-semibold text-white">{employee.position || 'N/A'}</p>
+              <p className="font-semibold text-white">{position || 'N/A'}</p>
+            </div>
+            <div className="bg-slate-900/50 p-4 rounded-lg">
+              <p className="text-sm text-slate-500 mb-1">Área/Departamento</p>
+              <p className="font-semibold text-white">{workDepartment || 'N/A'}</p>
             </div>
             <div className="bg-slate-900/50 p-4 rounded-lg">
               <p className="text-sm text-slate-500 mb-1">Fecha de Contratación</p>
-              <p className="font-semibold text-white">{employee.hireDate || 'N/A'}</p>
+              <p className="font-semibold text-white">
+                {employee.hireDate ? new Date(employee.hireDate).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}
+              </p>
             </div>
             {employee.terminationDate && (
               <div className="bg-slate-900/50 p-4 rounded-lg">
                 <p className="text-sm text-slate-500 mb-1">Fecha de Terminación</p>
-                <p className="font-semibold text-white">{employee.terminationDate}</p>
+                <p className="font-semibold text-red-400">
+                  {new Date(employee.terminationDate).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </p>
               </div>
             )}
             <div className="bg-slate-900/50 p-4 rounded-lg">
-              <p className="text-sm text-slate-500 mb-1">Departamento</p>
-              <p className="font-semibold text-white">{employee.department || 'N/A'}</p>
-            </div>
-            <div className="bg-slate-900/50 p-4 rounded-lg">
               <p className="text-sm text-slate-500 mb-1">Salario Base</p>
-              <p className="font-semibold text-white">{employee.salary ? `$${employee.salary.toLocaleString()}` : 'N/A'}</p>
+              <p className="font-semibold text-green-400">{salary ? `$${salary.toLocaleString('es-CO')}` : 'N/A'}</p>
             </div>
             <div className="bg-slate-900/50 p-4 rounded-lg">
               <p className="text-sm text-slate-500 mb-1">Estado</p>
-              <p className="font-semibold text-green-400">{employee.status || 'Activo'}</p>
+              <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
+                employee.status === 'active' || employee.status === 'ACTIVE' 
+                  ? 'bg-green-900/50 text-green-400 border border-green-700' 
+                  : 'bg-red-900/50 text-red-400 border border-red-700'
+              }`}>
+                {employee.status === 'active' || employee.status === 'ACTIVE' ? 'Activo' : 'Inactivo'}
+              </span>
             </div>
           </div>
         </div>

@@ -81,13 +81,14 @@ export type EmployeeUpdateFormData = z.infer<typeof employeeUpdateSchema>;
 
 export interface Employee {
   id: string;
+  userId: string;
   identificationType: string;
   identificationNumber: string;
   firstName: string;
   lastName: string;
   fullName: string;
   dateOfBirth: string;
-  age: number;
+  age?: number;
   gender?: string;
   phone?: string;
   address?: string;
@@ -99,6 +100,23 @@ export interface Employee {
   status: string;
   createdAt: Date;
   updatedAt: Date;
+  user?: {
+    id: string;
+    email: string;
+    fullName?: string;
+    status: string;
+  };
+  contracts?: Array<{
+    id: string;
+    position: string;
+    department: string;
+    salary: string;
+    contractType: string;
+    startDate: string;
+    endDate?: string;
+    isCurrent: boolean;
+  }>;
+  affiliations?: Array<any>;
 }
 
 export interface EmployeesResponse {
