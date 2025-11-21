@@ -88,12 +88,12 @@ export function DashboardPage() {
 
       // Procesar tendencia de nómina
       if (trendData.status === 'fulfilled' && trendData.value.length > 0) {
-        console.log('📈 Usando datos de tendencia del servicio:', trendData.value);
+        
         setPayrollTrend(trendData.value);
       } else if (payrollData.status === 'fulfilled') {
         // Generar tendencia desde períodos reales
         const periods = payrollData.value;
-        console.log('📅 Períodos de nómina recibidos:', periods);
+        
         
         const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
         const trend: PayrollTrend[] = [];
@@ -114,10 +114,10 @@ export function DashboardPage() {
           });
         }
         
-        console.log('📈 Tendencia de nómina generada:', trend);
+        
         setPayrollTrend(trend);
       } else {
-        console.log('❌ No se pudo obtener datos de tendencia:', trendData);
+        
       }
 
       if (activityData.status === 'fulfilled') {

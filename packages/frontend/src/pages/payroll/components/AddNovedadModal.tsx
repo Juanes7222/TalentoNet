@@ -36,12 +36,12 @@ export default function AddNovedadModal({ periodId, onClose, onSuccess }: AddNov
         status: 'active',
         limit: 1000, // Límite alto para obtener todos los empleados
       });
-      console.log('Empleados recibidos:', data); // Para debugging
+       // Para debugging
       
       // Si data es un objeto con propiedad 'data', extraerla
       const employeesArray = Array.isArray(data) ? data : (data as any).data || [];
       
-      console.log('Empleados activos:', employeesArray); // Para debugging
+       // Para debugging
       setEmployees(employeesArray);
       
     } catch (error) {
