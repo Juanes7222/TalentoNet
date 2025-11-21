@@ -80,12 +80,18 @@ export class EmployeesService {
           email: createEmployeeDto.email,
           passwordHash,
           status: UserStatus.ACTIVE, // Usuario activo porque tiene contraseña
-          roleId: employeeRole.id,
         });
 
         const savedUser = await queryRunner.manager.save(User, user);
         userId = savedUser.id;
-        this.logger.log(`Usuario creado exitosamente. ID: ${userId}, Email: ${createEmployeeDto.email}, Contraseña: ${createEmployeeDto.identificationNumber}`);
+        
+        // Asignar rol de employee usando la tabla user_roles
+        await queryRunner.manager.query(
+          'INSERT INTO user_roles (user_id, role_id) VALUES ($1, $2)',
+          [savedUser.id, employeeRole.id]
+        );
+        
+        this.logger.log(`Usuario creado exitosamente. ID: ${userId}, Email: ${createEmployeeDto.email}, Contraseña: ${createEmployeeDto.identificationNumber}, Rol: employee`);
       }
 
       // Crear empleado dentro de la transacción
